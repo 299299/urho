@@ -37,12 +37,12 @@ class Scene;
 ///     - Displaying physics debug geometry
 ///     - Using the Skybox component for setting up an unmoving sky
 ///     - Saving a scene to a file and loading it to restore a previous state
-class Physics : public Sample {
-  URHO3D_OBJECT(Physics, Sample);
+class Game : public Sample {
+  URHO3D_OBJECT(Game, Sample);
 
 public:
   /// Construct.
-  explicit Physics(Context *context);
+  explicit Game(Context *context);
 
   /// Setup after engine initialization and before running the main loop.
   void Start() override;

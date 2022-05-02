@@ -48,11 +48,13 @@
 
 #include <Urho3D/DebugNew.h>
 
-URHO3D_DEFINE_APPLICATION_MAIN(Physics)
+URHO3D_DEFINE_APPLICATION_MAIN(Game)
 
-Physics::Physics(Context *context) : Sample(context), drawDebug_(false) {}
+Game::Game(Context *context) : Sample(context), drawDebug_(false) {}
 
-void Physics::Start() {
+void Game::Start() {
+  URHO3D_LOGERROR("FUCK!!!");
+
   // Execute base class startup
   Sample::Start();
 
@@ -72,7 +74,7 @@ void Physics::Start() {
   Sample::InitMouseMode(MM_RELATIVE);
 }
 
-void Physics::CreateScene() {
+void Game::CreateScene() {
   auto *cache = GetSubsystem<ResourceCache>();
 
   scene_ = new Scene(context_);
@@ -177,7 +179,7 @@ void Physics::CreateScene() {
   cameraNode_->SetPosition(Vector3(0.0f, 5.0f, -20.0f));
 }
 
-void Physics::CreateInstructions() {
+void Game::CreateInstructions() {
   auto *cache = GetSubsystem<ResourceCache>();
   auto *ui = GetSubsystem<UI>();
 
@@ -198,7 +200,7 @@ void Physics::CreateInstructions() {
   instructionText->SetPosition(0, ui->GetRoot()->GetHeight() / 4);
 }
 
-void Physics::SetupViewport() {
+void Game::SetupViewport() {
   auto *renderer = GetSubsystem<Renderer>();
 
   // Set up a viewport to the Renderer subsystem so that the 3D scene can be
@@ -208,17 +210,17 @@ void Physics::SetupViewport() {
   renderer->SetViewport(0, viewport);
 }
 
-void Physics::SubscribeToEvents() {
+void Game::SubscribeToEvents() {
   // Subscribe HandleUpdate() function for processing update events
-  SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(Physics, HandleUpdate));
+  SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(Game, HandleUpdate));
 
   // Subscribe HandlePostRenderUpdate() function for processing the post-render
   // update event, during which we request debug geometry
   SubscribeToEvent(E_POSTRENDERUPDATE,
-                   URHO3D_HANDLER(Physics, HandlePostRenderUpdate));
+                   URHO3D_HANDLER(Game, HandlePostRenderUpdate));
 }
 
-void Physics::MoveCamera(float timeStep) {
+void Game::MoveCamera(float timeStep) {
   // Do not move if the UI has a focused element (the console)
   if (GetSubsystem<UI>()->GetFocusElement())
     return;
@@ -278,7 +280,7 @@ void Physics::MoveCamera(float timeStep) {
     drawDebug_ = !drawDebug_;
 }
 
-void Physics::SpawnObject() {
+void Game::SpawnObject() {
   auto *cache = GetSubsystem<ResourceCache>();
 
   // Create a smaller box at camera position
@@ -307,7 +309,7 @@ void Physics::SpawnObject() {
                           Vector3(0.0f, 0.25f, 1.0f) * OBJECT_VELOCITY);
 }
 
-void Physics::HandleUpdate(StringHash eventType, VariantMap &eventData) {
+void Game::HandleUpdate(StringHash eventType, VariantMap &eventData) {
   using namespace Update;
 
   // Take the frame time step, which is stored as a float
@@ -317,8 +319,7 @@ void Physics::HandleUpdate(StringHash eventType, VariantMap &eventData) {
   MoveCamera(timeStep);
 }
 
-void Physics::HandlePostRenderUpdate(StringHash eventType,
-                                     VariantMap &eventData) {
+void Game::HandlePostRenderUpdate(StringHash eventType, VariantMap &eventData) {
   // If draw debug mode is enabled, draw physics debug geometry. Use depth test
   // to make the result easier to interpret
   if (drawDebug_)

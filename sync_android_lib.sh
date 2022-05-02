@@ -24,10 +24,11 @@ rm ${TARGET_DIR}/app/build/outputs/apk/debug/app-debug.apk
 #cp ${SRC_DIR}/libs/armeabi-v7a/${SO_1} ${TARGET_DIR}/app/src/main/jniLibs/armeabi-v7a/
 cp ${SRC_DIR}/libs/armeabi-v7a/${SO_1} ${TARGET_DIR}/app/libs/armeabi-v7a/
 #cp ${SRC_DIR}/libs/x86/${SO_1} ${TARGET_DIR}/app/src/main/jniLibs/x86/
+cp ${SRC_DIR}/libs/armeabi-v7a/${SO_1} ${TARGET_DIR}/app/src/main/jniLibs/
 
-cp ${URHO_DIR}/Android/navi_sdk/*.jar ${TARGET_DIR}/app/libs/
+#cp ${URHO_DIR}/Android/navi_sdk/*.jar ${TARGET_DIR}/app/libs/
 
-cp ${URHO_DIR}/Android/navi_sdk/*.so ${TARGET_DIR}/app/libs/armeabi-v7a/
+#cp ${URHO_DIR}/Android/navi_sdk/*.so ${TARGET_DIR}/app/libs/armeabi-v7a/
 #cp ${URHO_DIR}/Android/navi_sdk/*.so ${TARGET_DIR}/app/src/main/jniLibs/armeabi-v7a/
 
 cp -rf ${URHO_DIR}/bin/Data/MY ${TARGET_DIR}/app/src/main/assets/Data/
