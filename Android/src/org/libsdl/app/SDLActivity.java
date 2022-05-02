@@ -134,26 +134,36 @@ public class SDLActivity extends Activity {
         // Urho3D: auto load all the shared libraries available in the library path
         if (!mIsSharedLibraryLoaded) {
             String libraryPath = getApplicationInfo().nativeLibraryDir;
-            File[] files = new File(libraryPath).listFiles((dir, filename) -> {
-                // Only list libraries, i.e. exclude gdbserver when it presents
-                return filename.matches("^lib.*\\.so$");
-            });
+            String libraryPath1 = getApplicationInfo().dataDir;
+
+            File[] all_files = new File(libraryPath).listFiles();
+            File so_file = null;
+
+            File[] data_files = new File(libraryPath1).listFiles();
+            String module_name = "Game";
+            String lib_name = "lib" + module_name + ".so";
+
+            for (File file : all_files)
+            {
+                if (file.getName().matches(lib_name))
+                {
+                    so_file = file;
+                }
+            }
+
+
             String errorMsgBrokenLib = "";
-            if (files == null) {
+            if (so_file == null) {
                 errorMsgBrokenLib = "no libraries found in path \"" + libraryPath + "\"";
             } else {
-                Arrays.sort(files, (lhs, rhs) -> Long.valueOf(lhs.lastModified()).compareTo(rhs.lastModified()));
-                ArrayList<String> libraryNames = new ArrayList<>(files.length);
-                for (final File libraryFilename : files) {
-                    String name = libraryFilename.getName().replaceAll("^lib(.*)\\.so$", "$1");
-                    libraryNames.add(name);
-                }
+                ArrayList<String> libraryNames = new ArrayList<>(1);
+                libraryNames.add(module_name);
 
                 // Load shared libraries
                 try {
                     if (onLoadLibrary(libraryNames)) {
                         mIsSharedLibraryLoaded = true;
-                        mMainSharedLib = "lib" + libraryNames.get(libraryNames.size() - 1) + ".so";
+                        mMainSharedLib = lib_name;
                     }
                 } catch(Exception e) {
                     errorMsgBrokenLib = e.getMessage();
