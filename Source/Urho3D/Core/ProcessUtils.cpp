@@ -40,7 +40,7 @@ extern "C" unsigned SDL_TVOS_GetActiveProcessorCount();
 #elif !defined(__linux__) && !defined(__EMSCRIPTEN__)
 #if defined(TARGET_OS_MAC) && defined(__arm64__)
 #define M1_MAC
-#define M1_NUM_CPU_CORE 8
+#define M1_NUM_CPU_CORE 6
 #else
 #include <LibCpuId/src/libcpuid.h>
 #endif

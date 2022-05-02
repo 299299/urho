@@ -30,7 +30,7 @@
 #include "../../Math/Color.h"
 
 #ifdef M1_MAC
-#include <glew.h>
+#include <GLEW/glew.h>
 #else
 #if defined(IOS) || defined(TVOS)
 #include <OpenGLES/ES2/gl.h>

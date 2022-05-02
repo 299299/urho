@@ -20,14 +20,6 @@
 # THE SOFTWARE.
 #
 
-# For M1 MAC
-if (URHO3D_M1)
-    set(GLEW_H /opt/homebrew/Cellar/glew/2.2.0_1/include/GL)
-    include_directories(${GLEW_H})
-    set(GLEW_LINK /opt/homebrew/Cellar/glew/2.2.0_1/lib/libGLEW.2.2.0.dylib)
-    link_libraries(${GLEW_LINK})
-endif ()
-
 # Check existence of various header files and their functions required by some of the third-party libraries and Urho3D library
 # Set the CMake variables in this scope but only add the compiler defines in the respective library's scope
 include (CheckIncludeFile)
@@ -137,6 +129,13 @@ if (NOT ANDROID AND NOT ARM AND NOT WEB)
     if (NOT CMAKE_SYSTEM_NAME STREQUAL Linux)
         add_subdirectory (ThirdParty/LibCpuId)
     endif ()
+endif ()
+
+# For M1 MAC
+if (URHO3D_M1)
+    add_subdirectory (ThirdParty/GLEW)
+    add_subdirectory (ThirdParty/MojoShader)
+    add_subdirectory (ThirdParty/LibCpuId)
 endif ()
 
 # Urho3D game engine library
