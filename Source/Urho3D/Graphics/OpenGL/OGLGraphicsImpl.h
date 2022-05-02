@@ -29,6 +29,9 @@
 #include "../../Graphics/Texture2D.h"
 #include "../../Math/Color.h"
 
+#ifdef M1_MAC
+#include <glew.h>
+#else
 #if defined(IOS) || defined(TVOS)
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
@@ -37,6 +40,7 @@
 #include <GLES2/gl2ext.h>
 #else
 #include <GLEW/glew.h>
+#endif
 #endif
 
 #ifndef GL_COMPRESSED_RGBA_S3TC_DXT1_EXT
