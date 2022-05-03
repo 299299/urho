@@ -158,7 +158,7 @@ void RebuildResourceDatabase()
     if (browserWindow is null)
         return;
 
-    String newResourceDirsCache = Join(cache.resourceDirs, ';');
+    String newResourceDirsCache = Join(cache.resourceDirs, ";");
     ScanResourceDirectories();
     if (newResourceDirsCache != resourceDirsCache)
     {
@@ -471,45 +471,56 @@ BrowserDir@ GetBrowserDir(String path)
 BrowserDir@ InitBrowserDir(String path)
 {
     BrowserDir@ browserDir;
-    browserDir = BrowserDirGet(path);
+    @browserDir = BrowserDirGet(path);
     if (browserDir !is null)
         return browserDir;
 
     Array<String> parts = path.Split('/');
-    Array<String> finishedParts;
-    if (parts.length > 0)
-    {
-        BrowserDir@ parent = rootDir;
-        for( uint i = 0; i < parts.length; ++i )
-        {
-            finishedParts.Push(parts[i]);
-            String currentPath = Join(finishedParts, "/");
-            if (!BrowserDirExists(currentPath))
-            {
-                browserDir = BrowserDir(currentPath);
-                BrowserDirSet(browserDir);
-                parent.children.Push(browserDir);
-            }
+    BrowserDir@ parent = rootDir;
 
-            if (browserDir !is null)
-                @parent = browserDir;
+    if (parts.length > 1)
+    {
+        String parentPath;
+        for (uint i=0; i<parts.length-1; ++i)
+        {
+            parentPath += parts[i];
+            if (i != parts.length - 2)
+                parentPath += "/";
         }
-        return browserDir;
+
+        @parent = BrowserDirGet(parentPath);
+
+        if (parent is null)
+        {
+            Print ("ERROR can not find parent path=" + parentPath);
+            return null;
+        }
     }
-    return null;
+
+    @browserDir = BrowserDir(path);
+    BrowserDirSet(browserDir);
+    parent.children.Push(browserDir);
+
+    return browserDir;
 }
 
 void ScanResourceDir(uint resourceDirIndex)
 {
     String resourceDir = cache.resourceDirs[resourceDirIndex];
+
+    if (resourceDir.EndsWith("CoreData/"))
+    {
+        return;
+    }
+
     ScanResourceDirFiles("", resourceDirIndex);
     Array<String> dirs = fileSystem.ScanDir(resourceDir, "*", SCAN_DIRS, true);
+
     for (uint i=0; i < dirs.length; ++i)
     {
         String path = dirs[i];
         if (path.EndsWith("."))
             continue;
-
         InitBrowserDir(path);
         ScanResourceDirFiles(path, resourceDirIndex);
     }
