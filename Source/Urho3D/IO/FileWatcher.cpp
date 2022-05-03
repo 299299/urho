@@ -59,7 +59,9 @@ FileWatcher::FileWatcher(Context* context) :
 #ifdef __linux__
     watchHandle_ = inotify_init();
 #elif defined(__APPLE__) && !defined(IOS) && !defined(TVOS)
-    supported_ = IsFileWatcherSupported();
+    // supported_ = IsFileWatcherSupported();
+    // hacked for M1 MAC
+    supported_ = true;
 #endif
 #endif
 }
