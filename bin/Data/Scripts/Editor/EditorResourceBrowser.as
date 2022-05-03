@@ -16,7 +16,8 @@ int browserSearchSortMode = 0;
 
 BrowserDir@ rootDir;
 Array<BrowserFile@> browserFiles;
-Dictionary browserDirs;
+// Dictionary browserDirs;
+Array<BrowserDir@> browserDirs;
 Array<int> activeResourceTypeFilters;
 Array<int> activeResourceDirFilters;
 
@@ -175,7 +176,7 @@ void ScanResourceDirectories()
     browserFilesToScan.Clear();
 
     rootDir = BrowserDir("");
-    browserDirs.Set("", @rootDir);
+    BrowserDirSet(rootDir);
 
     // collect all of the items and sort them afterwards
     for(uint i=0; i < cache.resourceDirs.length; ++i)
@@ -463,16 +464,15 @@ void HandleBrowserFileClick(StringHash eventType, VariantMap& eventData)
 
 BrowserDir@ GetBrowserDir(String path)
 {
-    BrowserDir@ browserDir;
-    browserDirs.Get(path, @browserDir);
-    return browserDir;
+    return BrowserDirGet(path);
 }
 
 // Makes sure the entire directory tree exists and new dir is linked to parent
 BrowserDir@ InitBrowserDir(String path)
 {
     BrowserDir@ browserDir;
-    if (browserDirs.Get(path, @browserDir))
+    browserDir = BrowserDirGet(path);
+    if (browserDir !is null)
         return browserDir;
 
     Array<String> parts = path.Split('/');
@@ -484,13 +484,15 @@ BrowserDir@ InitBrowserDir(String path)
         {
             finishedParts.Push(parts[i]);
             String currentPath = Join(finishedParts, "/");
-            if (!browserDirs.Get(currentPath, @browserDir))
+            if (!BrowserDirExists(currentPath))
             {
                 browserDir = BrowserDir(currentPath);
-                browserDirs.Set(currentPath, @browserDir);
+                BrowserDirSet(browserDir);
                 parent.children.Push(browserDir);
             }
-            @parent = browserDir;
+
+            if (browserDir !is null)
+                @parent = browserDir;
         }
         return browserDir;
     }
@@ -1455,6 +1457,28 @@ String ResourceTypeName(int resourceType)
         return "2D Animation Set";
     else
         return "";
+}
+
+void BrowserDirSet(BrowserDir@ browserDir)
+{
+    browserDirs.Push(browserDir);
+}
+
+bool BrowserDirExists(const String& key)
+{
+    return BrowserDirGet(key) !is null;
+}
+
+BrowserDir@ BrowserDirGet(const String& key)
+{
+    for (uint i=0; i<browserDirs.length; ++i)
+    {
+        if (browserDirs[i].resourceKey == key)
+        {
+            return browserDirs[i];
+        }
+    }
+    return null;
 }
 
 class BrowserDir

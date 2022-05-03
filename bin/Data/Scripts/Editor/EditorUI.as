@@ -84,34 +84,22 @@ void CreateUI()
     CreateQuickMenu();
     CreateContextMenu();
     CreateHierarchyWindow();
-
-    // return;
-
     CreateAttributeInspectorWindow();
     CreateEditorSettingsDialog();
     CreateEditorPreferencesDialog();
     CreateMaterialEditor();
     CreateParticleEffectEditor();
     CreateSpawnEditor();
-
-    // return;
-
-    // CreateSoundTypeEditor();
-
-    // return;
-
+    CreateSoundTypeEditor();
     CreateStatsBar();
     CreateConsole();
     CreateDebugHud();
-
-    return;
-
     CreateResourceBrowser();
     CreateCamera();
     CreateLayerEditor();
     CreateColorWheel();
 
-	terrainEditor.Create();
+    terrainEditor.Create();
 
     SubscribeToEvent("ScreenMode", "ResizeUI");
     SubscribeToEvent("MenuSelected", "HandleMenuSelected");
@@ -1759,7 +1747,7 @@ void SetIconEnabledColor(UIElement@ element, bool enabled, bool partial = false)
 void UpdateDirtyUI()
 {
     UpdateDirtyToolBar();
-	terrainEditor.UpdateDirty();
+    terrainEditor.UpdateDirty();
 
     // Perform hierarchy selection latently after the new selections are finalized (used in undo/redo action)
     if (!hierarchyUpdateSelections.empty)
