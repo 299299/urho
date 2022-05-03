@@ -84,16 +84,28 @@ void CreateUI()
     CreateQuickMenu();
     CreateContextMenu();
     CreateHierarchyWindow();
+
+    // return;
+
     CreateAttributeInspectorWindow();
     CreateEditorSettingsDialog();
     CreateEditorPreferencesDialog();
     CreateMaterialEditor();
     CreateParticleEffectEditor();
     CreateSpawnEditor();
-    CreateSoundTypeEditor();
+
+    // return;
+
+    // CreateSoundTypeEditor();
+
+    // return;
+
     CreateStatsBar();
     CreateConsole();
     CreateDebugHud();
+
+    return;
+
     CreateResourceBrowser();
     CreateCamera();
     CreateLayerEditor();

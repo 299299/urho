@@ -128,6 +128,8 @@ class ViewportContext
     LineEdit@ cameraOrthoSize;
     CheckBox@ cameraOrthographic;
 
+    bool update_cam_orth = false;
+
     ViewportContext(IntRect viewRect, uint index_, uint viewportId_)
     {
         cameraNode = Node();
@@ -255,6 +257,7 @@ class ViewportContext
 
     void SetOrthographic(bool orthographic)
     {
+        update_cam_orth = true;
         camera.orthographic = orthographic;
         if (camera.orthographic)
             camera.zoom = orthoCameraZoom;
@@ -262,6 +265,7 @@ class ViewportContext
             camera.zoom = 1.0f;
             
         UpdateSettingsUI();
+        update_cam_orth = false;
     }
 
     void Update(float timeStep)
@@ -323,6 +327,8 @@ class ViewportContext
 
     void HandleOrthographicToggled(StringHash eventType, VariantMap& eventData)
     {
+        if (update_cam_orth)
+            return;
         SetOrthographic(cameraOrthographic.checked);
     }
 

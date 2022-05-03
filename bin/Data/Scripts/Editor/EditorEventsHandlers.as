@@ -102,8 +102,12 @@ void EditorMainHandlePostRenderUpdate(StringHash eventType, VariantMap& eventDat
 
 void EditorMainHandleUIMouseClick(StringHash eventType, VariantMap& eventData)
 {
+    Print ("EditorMainHandleUIMouseClick");
     // EditorView.as handler
-    ViewMouseClick();
+    if (ui.focusElement is null)
+    {
+        ViewMouseClick();
+    }
     HandleOriginToggled(eventType, eventData);
 }
 

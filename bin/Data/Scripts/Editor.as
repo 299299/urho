@@ -83,14 +83,14 @@ void FirstFrame()
     // Create user interface for the editor
     CreateUI();
     // Create root UI element where all 'editable' UI elements would be parented to
-    CreateRootUIElement();
+    // CreateRootUIElement();
     // Load the initial scene if provided
-    ParseArguments();
+    // ParseArguments();
     // Switch to real frame handler after initialization
     SubscribeToEvent("Update", "HandleUpdate");
     SubscribeToEvent("ReloadFinished", "HandleReloadFinishOrFail");
     SubscribeToEvent("ReloadFailed", "HandleReloadFinishOrFail");
-    EditorSubscribeToEvents();
+    // EditorSubscribeToEvents();
 }
 
 void Stop()
@@ -130,6 +130,7 @@ void ParseArguments()
 
 void HandleUpdate(StringHash eventType, VariantMap& eventData)
 {
+    return;
     float timeStep = eventData["TimeStep"].GetFloat();
 
     DoResourceBrowserWork();

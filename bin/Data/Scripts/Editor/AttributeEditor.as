@@ -1259,6 +1259,9 @@ void PickResourceDone(StringHash eventType, VariantMap& eventData)
 
     // Validate the resource. It must come from within a registered resource directory, and be loaded successfully
     String resourceName = eventData["FileName"].GetString();
+
+    resourceName.Replace("./", "");
+
     Resource@ res = GetPickedResource(resourceName);
     if (res is null)
     {
