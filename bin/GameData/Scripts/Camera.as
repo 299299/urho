@@ -374,6 +374,14 @@ class AnimationCameraController : CameraController
     }
 };
 
+class FixedCameraController : CameraController
+{
+    FixedCameraController(Node@ n, const String&in name)
+    {
+        super(n, name);
+    }
+};
+
 class CameraManager
 {
     Array<CameraController@>    cameraControllers;
@@ -424,6 +432,7 @@ class CameraManager
         cameraControllers.Push(ThirdPersonCameraController(cameraNode, "ThirdPerson"));
         cameraControllers.Push(TransitionCameraController(cameraNode, "Transition"));
         cameraControllers.Push(AnimationCameraController(cameraNode, "Animation"));
+        cameraControllers.Push(FixedCameraController(cameraNode, "Fixed"));
 
         CollisionShape@ cameraSphere = cameraNode.CreateComponent("CollisionShape");
         cameraSphere.SetSphere(CAMERA_RADIUS);

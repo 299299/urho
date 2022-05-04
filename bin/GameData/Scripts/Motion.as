@@ -404,7 +404,7 @@ class Motion
     }
 };
 
-enum MotionLoadingState
+enum MotionLoadingStateType
 {
     MOTION_LOADING_START = 0,
     MOTION_LOADING_MOTIONS,

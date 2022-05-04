@@ -19,6 +19,7 @@
 uint playerId = M_MAX_UNSIGNED;
 GameInput@ gInput = GameInput();
 bool debugCamera = false;
+GameFSM@ gGame = TestGameFSM();
 
 void LoadGlobalVars()
 {
@@ -77,7 +78,6 @@ void Start()
     SubscribeToEvents();
 
     gGame.Start();
-    gGame.ChangeState("TestState");
 }
 
 void Stop()
@@ -104,12 +104,10 @@ void SubscribeToEvents()
     SubscribeToEvent("Update", "HandleUpdate");
     SubscribeToEvent("PostRenderUpdate", "HandlePostRenderUpdate");
     SubscribeToEvent("KeyDown", "HandleKeyDown");
-    SubscribeToEvent("MouseButtonDown", "HandleMouseButtonDown");
     SubscribeToEvent("AsyncLoadFinished", "HandleSceneLoadFinished");
     SubscribeToEvent("AsyncLoadProgress", "HandleAsyncLoadProgress");
     SubscribeToEvent("CameraEvent", "HandleCameraEvent");
     SubscribeToEvent("SliderChanged", "HandleSliderChanged");
-    SubscribeToEvent("ReloadFinished", "HandleResourceReloadFinished");
 }
 
 void HandleUpdate(StringHash eventType, VariantMap& eventData)
@@ -136,40 +134,6 @@ void HandleKeyDown(StringHash eventType, VariantMap& eventData)
     DebugKey(key);
 }
 
-void HandleMouseButtonDown(StringHash eventType, VariantMap& eventData)
-{
-    int button = eventData["Button"].GetInt();
-    if (button == MOUSEB_RIGHT)
-    {
-        IntVector2 pos = ui.cursorPosition;
-        // Check the cursor is visible and there is no UI element in front of the cursor
-        if (ui.GetElementAt(pos, true) !is null)
-            return;
-
-        //CreateDrag(float(pos.x), float(pos.y));
-        SubscribeToEvent("MouseMove", "HandleMouseMove");
-        SubscribeToEvent("MouseButtonUp", "HandleMouseButtonUp");
-    }
-}
-
-void HandleMouseButtonUp(StringHash eventType, VariantMap& eventData)
-{
-    int button = eventData["Button"].GetInt();
-    if (button == MOUSEB_RIGHT)
-    {
-        //DestroyDrag();
-        UnsubscribeFromEvent("MouseMove");
-        UnsubscribeFromEvent("MouseButtonUp");
-    }
-}
-
-void HandleMouseMove(StringHash eventType, VariantMap& eventData)
-{
-    int x = input.mousePosition.x;
-    int y = input.mousePosition.y;
-    //MoveDrag(float(x), float(y));
-}
-
 void HandleSceneLoadFinished(StringHash eventType, VariantMap& eventData)
 {
     Print("HandleSceneLoadFinished");
@@ -193,9 +157,55 @@ void HandleCameraEvent(StringHash eventType, VariantMap& eventData)
     gCameraMgr.OnCameraEvent(eventData);
 }
 
-void HandleResourceReloadFinished(StringHash eventType, VariantMap& eventData)
-{
 
+class TestLoadingState : SceneLoadingState
+{
+    TestLoadingState()
+    {
+        preLoadSceneName = "Scenes/Mini Toon Office_Scenes_Toon Office sample Scene.xml";
+        nextStateName = "TestInGameState";
+    }
+
+    void Update(float dt)
+    {
+    }
+};
+
+class TestInGameState : InGameState
+{
+    TestInGameState()
+    {
+        sceneName = "Scenes/Mini Toon Office_Scenes_Toon Office sample Scene.xml";
+    }
+
+    void OnNodeLoaded(Node@ node_)
+    {
+        InGameState::OnNodeLoaded(node_);
+    }
+
+    void OnSceneLoaded(Scene@ scene_)
+    {
+        InGameState::OnSceneLoaded(scene_);
+        gCameraMgr.SetCameraController("Fixed");
+
+        Node@ camNode = scene_.GetChild("Main Camera");
+        if (camNode !is null)
+        {
+            gCameraMgr.cameraNode.worldPosition = camNode.worldPosition;
+            gCameraMgr.cameraNode.worldRotation = camNode.worldRotation;
+        }
+    }
+};
+
+class TestGameFSM : GameFSM
+{
+    void Start()
+    {
+        AddState(TestLoadingState());
+        AddState(TestInGameState());
+        ChangeState(states[0].name);
+    }
 }
+
 
 
