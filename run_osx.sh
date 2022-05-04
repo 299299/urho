@@ -5,7 +5,7 @@ make -j8
 if [ $? -eq 0 ]; then
     echo 'BUILD OK'
     cd bin
-    ./Game -p 'CoreData;Data;GameData' -w "$@"
+    ./Game Scripts/Test.as -p 'CoreData;Data;GameData' -w "$@"
 else
     echo 'BUILD FAIL'
 fi
