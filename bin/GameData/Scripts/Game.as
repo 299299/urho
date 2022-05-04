@@ -90,8 +90,9 @@ class SceneLoadingState : GameState
             text.text = "Loading scene ressources progress=" + progress + " resources:" + loadedResources + "/" + totalResources;
     }
 
-    void OnSceneLoadFinished()
+    void OnSceneLoadFinished(Scene@ _scene)
     {
+        Print ("SceneLoadingState Finish");
         Finish();
     }
 
@@ -200,9 +201,12 @@ class InGameState : GameState
 
     void PostCreate()
     {
-        Node@ zoneNode = gameScene.GetChild("zone", true);
-        Zone@ zone = zoneNode.GetComponent("Zone");
-        // zone.heightFog = false;
+        // Node@ zoneNode = gameScene.GetChild("zone", true);
+        // if (zoneNode !is null)
+        // {
+        //     Zone@ zone = zoneNode.GetComponent("Zone");
+        //     // zone.heightFog = false;
+        // }
     }
 
     void CreateGameUI()
@@ -393,6 +397,8 @@ class GameFSM : FSM
         bool b = FSM::ChangeState(nameHash);
         if (b)
             @gameState = cast<GameState>(currentState);
+        else
+            Print ("GameFSM ChangeState failed.");
         return b;
     }
 

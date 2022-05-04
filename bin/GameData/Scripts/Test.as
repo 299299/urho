@@ -162,6 +162,7 @@ class TestLoadingState : SceneLoadingState
 {
     TestLoadingState()
     {
+        SetName("TestLoadingState");
         preLoadSceneName = "Scenes/Mini Toon Office_Scenes_Toon Office sample Scene.xml";
         nextStateName = "TestInGameState";
     }
@@ -175,6 +176,7 @@ class TestInGameState : InGameState
 {
     TestInGameState()
     {
+        SetName("TestInGameState");
         sceneName = "Scenes/Mini Toon Office_Scenes_Toon Office sample Scene.xml";
     }
 
