@@ -137,7 +137,7 @@ else ()
 endif ()
 
 # For M1 Mac
-if (URHO3D_M1)
+if (APPLE AND URHO3D_M1)
     set (GLOB_OBJC_PATTERN *.m)
 else ()
 if (APPLE AND NOT ARM)

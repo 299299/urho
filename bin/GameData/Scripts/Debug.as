@@ -289,18 +289,6 @@ void DebugKey(int key)
         ui.cursor.visible = !debugCamera;
         SaveGlobalVars();
     }
-    else if (key == KEY_4)
-    {
-        colorGradingIndex ++;
-        SetColorGrading(colorGradingIndex);
-        SaveGlobalVars();
-    }
-    else if (key == KEY_5)
-    {
-        colorGradingIndex --;
-        SetColorGrading(colorGradingIndex);
-        SaveGlobalVars();
-    }
     else if (key == 'R' || key == 'r')
         scene_.updateEnabled = !scene_.updateEnabled;
     else if (key == 'T'  || key == 't')

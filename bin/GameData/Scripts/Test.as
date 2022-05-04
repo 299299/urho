@@ -28,13 +28,6 @@ void LoadGlobalVars()
     {
         drawDebug = v.GetInt();
     }
-
-    v = GetGlobalVar("Color_Grading");
-    if (!v.empty)
-    {
-        colorGradingIndex = v.GetInt();
-    }
-
     v = GetGlobalVar("Debug_Camera");
     if (!v.empty)
     {
@@ -48,7 +41,6 @@ void LoadGlobalVars()
 void SaveGlobalVars()
 {
     SetGlobalVar("Draw_Debug", Variant(drawDebug));
-    SetGlobalVar("Color_Grading", Variant(colorGradingIndex));
     SetGlobalVar("Debug_Camera", Variant(debugCamera));
 }
 

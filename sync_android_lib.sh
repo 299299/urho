@@ -26,12 +26,16 @@ cp ${SRC_DIR}/libs/armeabi-v7a/${SO_1} ${TARGET_DIR}/app/libs/armeabi-v7a/
 #cp ${SRC_DIR}/libs/x86/${SO_1} ${TARGET_DIR}/app/src/main/jniLibs/x86/
 cp ${SRC_DIR}/libs/armeabi-v7a/${SO_1} ${TARGET_DIR}/app/src/main/jniLibs/
 
+cp ${SRC_DIR}/libs/armeabi-v7a/${SO_1} ${TARGET_DIR}/app/src/main/jniLibs/armeabi-v7a
+
 #cp ${URHO_DIR}/Android/navi_sdk/*.jar ${TARGET_DIR}/app/libs/
 
 #cp ${URHO_DIR}/Android/navi_sdk/*.so ${TARGET_DIR}/app/libs/armeabi-v7a/
 #cp ${URHO_DIR}/Android/navi_sdk/*.so ${TARGET_DIR}/app/src/main/jniLibs/armeabi-v7a/
 
-cp -rf ${URHO_DIR}/bin/Data/MY ${TARGET_DIR}/app/src/main/assets/Data/
+cp -rf ${URHO_DIR}/bin/Data/CommandLine.txt ${TARGET_DIR}/app/src/main/assets/Data/
+cp -rf ${URHO_DIR}/bin/GameData ${TARGET_DIR}/app/src/main/assets/
+cp -rf ${URHO_DIR}/bin/SceneData ${TARGET_DIR}/app/src/main/assets/
 
 #cp ${URHO_DIR}/Android/AndroidManifest.xml ${TARGET_DIR}/app/src/main/
 #cp ${URHO_DIR}/Android/src/org/libsdl/app/* ${TARGET_DIR}/app/src/main/java/org/libsdl/app/

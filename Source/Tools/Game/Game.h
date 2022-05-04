@@ -27,38 +27,39 @@
 using namespace Urho3D;
 
 /// Game application runs a script specified on the command line.
-class Game : public Application
-{
-    URHO3D_OBJECT(Game, Application);
+class Game : public Application {
+  URHO3D_OBJECT(Game, Application);
 
 public:
-    /// Construct.
-    explicit Game(Context* context);
+  /// Construct.
+  explicit Game(Context *context);
 
-    /// Setup before engine initialization. Verify that a script file has been specified.
-    void Setup() override;
-    /// Setup after engine initialization. Load the script and execute its start function.
-    void Start() override;
-    /// Cleanup after the main loop. Run the script's stop function if it exists.
-    void Stop() override;
+  /// Setup before engine initialization. Verify that a script file has been
+  /// specified.
+  void Setup() override;
+  /// Setup after engine initialization. Load the script and execute its start
+  /// function.
+  void Start() override;
+  /// Cleanup after the main loop. Run the script's stop function if it exists.
+  void Stop() override;
 
 private:
-    /// Handle reload start of the script file.
-    void HandleScriptReloadStarted(StringHash eventType, VariantMap& eventData);
-    /// Handle reload success of the script file.
-    void HandleScriptReloadFinished(StringHash eventType, VariantMap& eventData);
-    /// Handle reload failure of the script file.
-    void HandleScriptReloadFailed(StringHash eventType, VariantMap& eventData);
-    /// Parse script file name from the first argument.
-    void GetScriptFileName();
+  /// Handle reload start of the script file.
+  void HandleScriptReloadStarted(StringHash eventType, VariantMap &eventData);
+  /// Handle reload success of the script file.
+  void HandleScriptReloadFinished(StringHash eventType, VariantMap &eventData);
+  /// Handle reload failure of the script file.
+  void HandleScriptReloadFailed(StringHash eventType, VariantMap &eventData);
+  /// Parse script file name from the first argument.
+  void GetScriptFileName();
 
-    /// Script file name.
-    String scriptFileName_;
-    /// Flag whether CommandLine.txt was already successfully read.
-    bool commandLineRead_;
+  /// Script file name.
+  String scriptFileName_;
+  /// Flag whether CommandLine.txt was already successfully read.
+  bool commandLineRead_;
 
 #ifdef URHO3D_ANGELSCRIPT
-    /// Script file.
-    SharedPtr<ScriptFile> scriptFile_;
+  /// Script file.
+  SharedPtr<ScriptFile> scriptFile_;
 #endif
 };

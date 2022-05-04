@@ -1,1 +1,1 @@
-Scripts/Test.as -p 'CoreData;Data;GameData;SceneData'
+Scripts/Test.as -p CoreData;Data;GameData;SceneData

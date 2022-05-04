@@ -12,7 +12,6 @@ enum RenderFeature
 };
 
 bool bHdr = true;
-int colorGradingIndex = 0;
 int render_features = RF_FULL;
 String LUT = "";
 
@@ -26,7 +25,7 @@ void CreateViewPort()
         // if (reflection)
         //    renderpath.Load(cache.GetResource("XMLFile","RenderPaths/ForwardHWDepth.xml"));
         // else
-        renderpath.Load(cache.GetResource("XMLFile","RenderPaths/ForwardHWDepth.xml")); //ForwardHWDepth
+        renderpath.Load(cache.GetResource("XMLFile","RenderPaths/ForwardDepth.xml")); //ForwardDepth
         renderpath.Append(cache.GetResource("XMLFile","PostProcess/AutoExposure.xml"));
         renderpath.Append(cache.GetResource("XMLFile","PostProcess/BloomHDR.xml"));
         renderpath.Append(cache.GetResource("XMLFile","PostProcess/Tonemap.xml"));
@@ -38,10 +37,9 @@ void CreateViewPort()
         renderpath.shaderParameters["BloomHDRMix"] = Variant(Vector2(0.9f, 0.6f));
     }
     renderpath.Append(cache.GetResource("XMLFile", "PostProcess/FXAA2.xml"));
-    renderpath.Append(cache.GetResource("XMLFile","PostProcess/ColorCorrection.xml"));
+    // renderpath.Append(cache.GetResource("XMLFile","PostProcess/ColorCorrection.xml"));
     renderpath.Append(cache.GetResource("XMLFile", "PostProcess/GammaCorrection.xml"));
     viewport.renderPath = renderpath;
-    SetColorGrading(colorGradingIndex);
 }
 
 int FindRenderCommand(RenderPath@ path, const String&in tag)
@@ -66,71 +64,4 @@ void ChangeRenderCommandTexture(RenderPath@ path, const String&in tag, const Str
     RenderPathCommand cmd = path.commands[i];
     cmd.textureNames[unit] = texture;
     path.commands[i] = cmd;
-}
-
-
-void SetColorGrading(int index)
-{
-    Array<String> colorGradingTextures =
-    {
-        "Weathered",
-        "Hipster",
-        "Vintage",
-        "Hollywood",
-        "BleachBypass",
-        "CrossProcess",
-        "Dream",
-        "Negative",
-        "Rainbow",
-        "Posterize",
-        "Noire",
-        "SciFi",
-        "SinCity",
-        "Saw",
-        "Sepia",
-        "1960",
-        "Action",
-        "AlienInvasion",
-        "BadFilm",
-        "Beach",
-        "Cyberpunk",
-        "Dark",
-        "DayForNight",
-        "Documentary",
-        "FinalBattle",
-        "Fire",
-        "Flashback",
-        "Hackers",
-        "HeatSignature",
-        "Hitchcock",
-        "AlienWorld",
-        "Horror",
-        "HotSun",
-        "Intensity",
-        "Matrix",
-        "Millennium",
-        "MusicVideo",
-        "OldCountry",
-        "OrangeTeal",
-        "PurpleHaze",
-        "RedAndBlue",
-        "RedRoom",
-        "RobotVision",
-        "Romantic",
-        "TexMex",
-        "Toxic",
-        "TritonePurple",
-        "Underwater",
-        "War",
-        "Warm",
-        "LUTIdentity"
-    };
-    int len = int(colorGradingTextures.length);
-    if (index >= len)
-        index = 0;
-    if (index < 0)
-        index = len - 1;
-    colorGradingIndex = index;
-    LUT = colorGradingTextures[index];
-    ChangeRenderCommandTexture(renderer.viewports[0].renderPath, "ColorCorrection", "Textures/LUT/" + LUT + ".xml", TU_VOLUMEMAP);
 }
