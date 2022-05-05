@@ -36,6 +36,8 @@ cp ${SRC_DIR}/libs/armeabi-v7a/${SO_1} ${TARGET_DIR}/app/src/main/jniLibs/armeab
 cp -rf ${URHO_DIR}/bin/Data/CommandLine.txt ${TARGET_DIR}/app/src/main/assets/Data/
 cp -rf ${URHO_DIR}/bin/GameData ${TARGET_DIR}/app/src/main/assets/
 cp -rf ${URHO_DIR}/bin/SceneData ${TARGET_DIR}/app/src/main/assets/
+cp -rf ${URHO_DIR}/bin/Data ${TARGET_DIR}/app/src/main/assets/
+cp -rf ${URHO_DIR}/bin/CoreData ${TARGET_DIR}/app/src/main/assets/
 
 #cp ${URHO_DIR}/Android/AndroidManifest.xml ${TARGET_DIR}/app/src/main/
 #cp ${URHO_DIR}/Android/src/org/libsdl/app/* ${TARGET_DIR}/app/src/main/java/org/libsdl/app/

@@ -11,16 +11,20 @@ enum RenderFeature
     RF_FULL     = RF_SHADOWS | RF_HDR,
 };
 
-bool bHdr = true;
-int render_features = RF_FULL;
+int render_features = RF_SHADOWS;
 String LUT = "";
+bool bHdr = true;
 
 void CreateViewPort()
 {
     Viewport@ viewport = Viewport(null, null);
     renderer.viewports[0] = viewport;
+
+    bHdr = render_features & RF_HDR != 0;
+    renderer.hdrRendering = bHdr;
+
     RenderPath@ renderpath = viewport.renderPath.Clone();
-    if (render_features & RF_HDR != 0)
+    if (bHdr)
     {
         // if (reflection)
         //    renderpath.Load(cache.GetResource("XMLFile","RenderPaths/ForwardHWDepth.xml"));
@@ -38,7 +42,9 @@ void CreateViewPort()
     }
     renderpath.Append(cache.GetResource("XMLFile", "PostProcess/FXAA2.xml"));
     // renderpath.Append(cache.GetResource("XMLFile","PostProcess/ColorCorrection.xml"));
-    renderpath.Append(cache.GetResource("XMLFile", "PostProcess/GammaCorrection.xml"));
+
+    if (bHdr)
+        renderpath.Append(cache.GetResource("XMLFile", "PostProcess/GammaCorrection.xml"));
     viewport.renderPath = renderpath;
 }
 
