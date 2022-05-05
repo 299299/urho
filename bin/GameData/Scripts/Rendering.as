@@ -11,7 +11,7 @@ enum RenderFeature
     RF_FULL     = RF_SHADOWS | RF_HDR,
 };
 
-int render_features = RF_SHADOWS;
+int render_features = RF_FULL;
 String LUT = "";
 bool bHdr = true;
 
