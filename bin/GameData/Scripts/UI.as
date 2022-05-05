@@ -139,6 +139,7 @@ void CreateConsoleAndDebugHud()
     // Create debug HUD
     DebugHud@ debugHud = engine.CreateDebugHud();
     debugHud.defaultStyle = xmlFile;
+    debugHud.mode = DEBUGHUD_SHOW_ALL;
 }
 
 void CreateUI()

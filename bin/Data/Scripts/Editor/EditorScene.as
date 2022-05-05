@@ -911,8 +911,22 @@ bool SceneSmartDuplicateNode()
 
 bool ViewCloser()
 {
-    if (selectedNodes.length > 0 || selectedNodes.length > 0)
+    if (selectedNodes.length > 0)
         LocateNodesAndComponents(selectedNodes, selectedComponents);
+
+    return true;
+}
+
+bool MoveObjToCameraPos()
+{
+    if (selectedNodes.length > 0)
+    {
+        for (uint i=0; i<selectedNodes.length; ++i)
+        {
+            selectedNodes[i].worldPosition = cameraNode.worldPosition;
+            selectedNodes[i].worldRotation = cameraNode.worldRotation;
+        }
+    }
 
     return true;
 }

@@ -143,6 +143,8 @@ void UpdateViewDebugIcons()
                     float distance = (camPos - nodes[i].worldPosition).length;
                     if (isOrthographic)
                         distance = debugIconsOrthoDistance;
+                    distance = Max(0.25, distance);
+
                     int iconsOffset = debugIconsPlacement[StringHash(nodes[i].id)].GetInt();
                     float iconsYPos = 0;
 
@@ -161,6 +163,7 @@ void UpdateViewDebugIcons()
                                     float stepDistance = (camPos - splinePoint).length;
                                     if (isOrthographic)
                                         stepDistance = debugIconsOrthoDistance;
+                                    stepDistance = Max(0.25, stepDistance);
 
                                     if (step == 0) // SplinePath start
                                     {

@@ -431,12 +431,14 @@ void CreateMenuBar()
         if (hotKeyMode == HOTKEYS_MODE_STANDARD)
         {
             popup.AddChild(CreateMenuItem("View closer", @ViewCloser, KEY_F));
+            popup.AddChild(CreateMenuItem("Move Obj To Camera Pos", @MoveObjToCameraPos, KEY_F, QUAL_CTRL));
         }
         else if (hotKeyMode == HOTKEYS_MODE_BLENDER)
         {
-             popup.AddChild(CreateMenuItem("Move to layer", @ShowLayerMover, KEY_M));
-             popup.AddChild(CreateMenuItem("Smart Duplicate", @SceneSmartDuplicateNode, KEY_D, QUAL_ALT));
-             popup.AddChild(CreateMenuItem("View closer", @ViewCloser, KEY_KP_PERIOD));
+            popup.AddChild(CreateMenuItem("Move to layer", @ShowLayerMover, KEY_M));
+            popup.AddChild(CreateMenuItem("Smart Duplicate", @SceneSmartDuplicateNode, KEY_D, QUAL_ALT));
+            popup.AddChild(CreateMenuItem("View closer", @ViewCloser, KEY_KP_PERIOD));
+            popup.AddChild(CreateMenuItem("Move Obj To Camera Pos", @MoveObjToCameraPos, KEY_F, QUAL_CTRL));
         }
         popup.AddChild(CreateMenuItem("Color wheel", @ColorWheelBuildMenuSelectTypeColor, KEY_W, QUAL_ALT));
         popup.AddChild(CreateMenuItem("Show components icons", @ViewDebugIcons, KEY_I, QUAL_ALT));
