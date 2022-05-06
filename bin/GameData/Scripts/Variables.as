@@ -272,6 +272,9 @@ int debug_mode = 2;
 const String preload_scene_name = "Scenes/animation.xml";
 const String game_scene_name = "Scenes/1.xml";
 
+const String playerClassName = "Bruce"; // DeathStroke
+const String playerObjectName = "elm";
+
 // ==============================================
 //
 //   GLOBAL INSTANCES
