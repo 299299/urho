@@ -180,14 +180,19 @@ class TestInGameState : InGameState
     void OnSceneLoaded(Scene@ scene_)
     {
         InGameState::OnSceneLoaded(scene_);
-        gCameraMgr.SetCameraController("Fixed");
 
         Node@ camNode = scene_.GetChild("Main Camera");
         if (camNode !is null)
         {
             gCameraMgr.cameraNode.worldPosition = camNode.worldPosition;
             gCameraMgr.cameraNode.worldRotation = camNode.worldRotation;
+
+            gCameraMgr.debugCameraNode.worldPosition = camNode.worldPosition;
+            gCameraMgr.debugCameraNode.worldRotation = camNode.worldRotation;
         }
+
+        gCameraMgr.SetCameraController("Fixed");
+        gCameraMgr.SetDebugCamera(true);
     }
 };
 

@@ -1,0 +1,13 @@
+<node id="55">
+	<attribute name="Is Enabled" value="true" />
+	<attribute name="Name" value="toon_office_pilot_red" />
+	<attribute name="Tags"><string value="Untagged" /></attribute>
+	<attribute name="Position" value="0 0 0" />
+	<attribute name="Rotation" value="1 0 0 0" />
+	<attribute name="Scale" value="1 1 1" />
+	<component type="StaticModel" id="56">
+		<attribute name="Model" value="Model;Mini Toon Office/Models/props/toon_office_pilot_red/toon_office_pilot_red.mdl" />
+		<attribute name="Material" value="Material;Resources/unity_builtin_extra/Default-Material.xml" />
+		<attribute name="Cast Shadows" value="true" />
+	</component>
+</node>
