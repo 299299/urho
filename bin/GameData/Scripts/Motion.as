@@ -4,32 +4,62 @@
 //
 // ==============================================
 
-const int LAYER_MOVE = 0;
-
-void PlayAnimation(AnimationController@ ctrl, const String&in name, uint layer = LAYER_MOVE, bool loop = false, float blendTime = 0.1f, float startTime = 0.0f, float speed = 1.0f)
+void Global_PlayAnimation(AnimationController@ ctrl, const String&in name, uint layer = LAYER_MOVE, bool loop = false, float blendTime = 0.1f, float startTime = 0.0f, float speed = 1.0f)
 {
-    //Print("PlayAnimation " + name + " loop=" + loop + " blendTime=" + blendTime + " startTime=" + startTime + " speed=" + speed);
+    //LogPrint("PlayAnimation " + name + " loop=" + loop + " blendTime=" + blendTime + " startTime=" + startTime + " speed=" + speed);
     ctrl.StopLayer(layer, blendTime);
     ctrl.PlayExclusive(name, layer, loop, blendTime);
     ctrl.SetTime(name, startTime);
     ctrl.SetSpeed(name, speed);
 }
 
-int FindMotionIndex(const Array<Motion@>&in motions, const String&in name)
+void FillAnimationWithCurrentPose(Animation@ anim, Node@ _node)
 {
-    for (uint i=0; i<motions.length; ++i)
+    Array<String> boneNames =
     {
-        if (motions[i].name == name)
-            return i;
+        "Bip01_$AssimpFbx$_Translation",
+        "Bip01_$AssimpFbx$_PreRotation",
+        "Bip01_$AssimpFbx$_Rotation",
+        "Bip01_Pelvis",
+        "Bip01_Spine",
+        "Bip01_Spine1",
+        "Bip01_Spine2",
+        "Bip01_Spine3",
+        "Bip01_Neck",
+        "Bip01_Head",
+        "Bip01_L_Thigh",
+        "Bip01_L_Calf",
+        "Bip01_L_Foot",
+        "Bip01_R_Thigh",
+        "Bip01_R_Calf",
+        "Bip01_R_Foot",
+        "Bip01_L_Clavicle",
+        "Bip01_L_UpperArm",
+        "Bip01_L_Forearm",
+        "Bip01_L_Hand",
+        "Bip01_R_Clavicle",
+        "Bip01_R_UpperArm",
+        "Bip01_R_Forearm",
+        "Bip01_R_Hand"
+    };
+
+    anim.RemoveAllTracks();
+    for (uint i=0; i<boneNames.length; ++i)
+    {
+        Node@ n = _node.GetChild(boneNames[i], true);
+        if (n is null)
+        {
+            log.Error("FillAnimationWithCurrentPose can not find bone " + boneNames[i]);
+            continue;
+        }
+        AnimationTrack@ track = anim.CreateTrack(boneNames[i]);
+        track.channelMask = CHANNEL_POSITION | CHANNEL_ROTATION;
+        AnimationKeyFrame kf;
+        kf.time = 0.0f;
+        kf.position = n.position;
+        kf.rotation = n.rotation;
+        track.AddKeyFrame(kf);
     }
-    return -1;
-}
-
-
-void DebugDrawDirection(DebugRenderer@ debug, const Vector3& start, float angle, const Color&in color, float radius = 1.0)
-{
-    Vector3 end = start + Vector3(Sin(angle) * radius, 0, Cos(angle) * radius);
-    debug.AddLine(start, end, color, false);
 }
 
 void SendAnimationTriger(Node@ _node, const StringHash&in nameHash, int value = 0)
@@ -40,6 +70,31 @@ void SendAnimationTriger(Node@ _node, const StringHash&in nameHash, int value = 
     VariantMap data;
     data[DATA] = anim_data;
     _node.SendEvent("AnimationTrigger", data);
+}
+
+Vector4 GetTargetTransform(const Vector3& basePosition, float baseRotation, const Vector3& baseMotionPosition, float baseMotionRotation, Motion@ alignMotion)
+{
+    float r1 = alignMotion.GetStartRot();
+    float r2 = baseMotionRotation;
+    Vector3 s1 = alignMotion.GetStartPos();
+    Vector3 s2 = baseMotionPosition;
+
+    float baseYaw = baseRotation;
+    float targetRotation = baseYaw + (r1 - r2);
+    Vector3 diff_ws = Quaternion(0, baseYaw - r2, 0) * (s1 - s2);
+    Vector3 targetPosition = basePosition + diff_ws;
+
+    if (d_log)
+    {
+        LogPrint("------------------------------------------------------------------------------------------------------------------------------------------------");
+        LogPrint("GetTargetTransform align-motion=" + alignMotion.name);
+        LogPrint("GetTargetTransform align-start-pos=" + s1.ToString() + " base-start-pos=" + s2.ToString() + " p-diff=" + (s1 - s2).ToString());
+        LogPrint("baseYaw=" + baseYaw + " targetRotation=" + targetRotation + " align-start-rot=" + r1 + " base-start-rot=" + r2 + " r-diff=" + (r1 - r2));
+        LogPrint("basePosition=" + basePosition.ToString() + " diff_ws=" + diff_ws.ToString() + " targetPosition=" + targetPosition.ToString());
+        LogPrint("------------------------------------------------------------------------------------------------------------------------------------------------");
+    }
+
+    return Vector4(targetPosition.x,  targetPosition.y, targetPosition.z, targetRotation);
 }
 
 Vector4 GetTargetTransform(Node@ baseNode, Motion@ alignMotion, Motion@ baseMotion)
@@ -56,15 +111,23 @@ Vector4 GetTargetTransform(Node@ baseNode, Motion@ alignMotion, Motion@ baseMoti
 
     if (d_log)
     {
-        Print("------------------------------------------------------------------------------------------------------------------------------------------------");
-        Print("GetTargetTransform align-motion=" + alignMotion.name + " base-motion=" + baseMotion.name);
-        Print("GetTargetTransform base=" + baseNode.name + " align-start-pos=" + s1.ToString() + " base-start-pos=" + s2.ToString() + " p-diff=" + (s1 - s2).ToString());
-        Print("baseYaw=" + baseYaw + " targetRotation=" + targetRotation + " align-start-rot=" + r1 + " base-start-rot=" + r2 + " r-diff=" + (r1 - r2));
-        Print("basePosition=" + baseNode.worldPosition.ToString() + " diff_ws=" + diff_ws.ToString() + " targetPosition=" + targetPosition.ToString());
-        Print("------------------------------------------------------------------------------------------------------------------------------------------------");
+        LogPrint("------------------------------------------------------------------------------------------------------------------------------------------------");
+        LogPrint("GetTargetTransform align-motion=" + alignMotion.name + " base-motion=" + baseMotion.name);
+        LogPrint("GetTargetTransform base=" + baseNode.name + " align-start-pos=" + s1.ToString() + " base-start-pos=" + s2.ToString() + " p-diff=" + (s1 - s2).ToString());
+        LogPrint("baseYaw=" + baseYaw + " targetRotation=" + targetRotation + " align-start-rot=" + r1 + " base-start-rot=" + r2 + " r-diff=" + (r1 - r2));
+        LogPrint("basePosition=" + baseNode.worldPosition.ToString() + " diff_ws=" + diff_ws.ToString() + " targetPosition=" + targetPosition.ToString());
+        LogPrint("------------------------------------------------------------------------------------------------------------------------------------------------");
     }
 
     return Vector4(targetPosition.x,  targetPosition.y, targetPosition.z, targetRotation);
+}
+
+float GetTargetTransformErrorSqr(Node@ alignNode, Node@ baseNode, Motion@ alignMotion, Motion@ baseMotion)
+{
+    Vector4 v4 = GetTargetTransform(baseNode, alignMotion, baseMotion);
+    Vector3 v3 = Vector3(v4.x, v4.y, v4.z) - alignNode.worldPosition;
+    v3.y = 0;
+    return v3.lengthSquared;
 }
 
 class Motion
@@ -87,13 +150,15 @@ class Motion
     int                     allowMotion;
 
     float                   maxHeight;
-
-    float                   rotateAngle = 361;
     bool                    processed = false;
 
     float                   dockAlignTime;
+    int                     dockAlignFrame;
     Vector3                 dockAlignOffset;
     String                  dockAlignBoneName;
+
+    int                     type;
+    float                   dockDist;
 
     Motion()
     {
@@ -121,6 +186,7 @@ class Motion
 
     ~Motion()
     {
+        // LogPrint("Release animation " + this.name);
         animation = null;
         cache.ReleaseResource("Animation", animationName);
     }
@@ -131,20 +197,26 @@ class Motion
             return;
         uint startTime = time.systemTime;
         this.animationName = GetAnimationName(this.name);
+        if (cache.GetExistingResource("Animation", animationName) !is null)
+            LogPrint("Error " + this.name + " already loaded !!!");
+
         this.animation = cache.GetResource("Animation", animationName);
         if (this.animation is null)
             return;
 
         gMotionMgr.memoryUse += this.animation.memoryUse;
-        rotateAngle = ProcessAnimation(animationName, motionFlag, allowMotion, rotateAngle, motionKeys, startFromOrigin);
+        ProcessAnimation(curRig, animationName, motionFlag, allowMotion, motionKeys, startFromOrigin);
         SetEndFrame(endFrame);
 
         if (!dockAlignBoneName.empty)
         {
             Vector3 v = GetBoneWorldPosition(curRig, animationName, dockAlignBoneName, dockAlignTime);
-            if (d_log)
-                Print(this.name + " bone " + dockAlignBoneName + " world-pos=" + v.ToString() + " at time:" + dockAlignTime);
+            // LogPrint(this.name + " bone " + dockAlignBoneName + " world-pos=" + v.ToString() + " at time:" + dockAlignTime);
             dockAlignOffset += v;
+
+            Vector4 k = motionKeys[dockAlignFrame];
+            Vector3 v3 = Vector3(k.x, 0, k.z);
+            dockDist = v3.length;
         }
 
         if (!motionKeys.empty)
@@ -164,14 +236,18 @@ class Motion
         processed = true;
 
         if (d_log)
-            Print("Motion " + name + " endDistance="  + endDistance + " startFromOrigin=" + startFromOrigin.ToString()  + " timeCost=" + String(time.systemTime - startTime) + " ms");
+        LogPrint("Motion " + name + " endDistance="  + endDistance +
+                 " startFromOrigin=" + startFromOrigin.ToString()  +
+                 " maxHeight=" + maxHeight +
+                 " timeCost=" + String(time.systemTime - startTime) + " ms");
     }
 
-    void SetDockAlign(const String&in boneName, float alignTime, const Vector3&in offset)
+    void SetDockAlign(const String&in boneName, int alignFrame, const Vector3&in offset = Vector3::ZERO)
     {
         dockAlignBoneName = boneName;
         dockAlignOffset = offset;
-        dockAlignTime = alignTime;
+        dockAlignTime = float(alignFrame) * SEC_PER_FRAME;
+        dockAlignFrame = alignFrame;
     }
 
     void SetEndFrame(int frame)
@@ -233,7 +309,14 @@ class Motion
         if (looped)
             return _node.worldRotation * Vector3(motionOut.x, motionOut.y, motionOut.z) + _node.worldPosition + object.motion_deltaPosition;
         else
-            return Quaternion(0, object.motion_startRotation + object.motion_deltaRotation, 0) * Vector3(motionOut.x, motionOut.y, motionOut.z) + object.motion_startPosition + object.motion_deltaPosition;
+            return Quaternion(0, object.motion_rotation + object.motion_deltaRotation, 0) * Vector3(motionOut.x, motionOut.y, motionOut.z) + object.motion_startPosition + object.motion_deltaPosition;
+    }
+
+    Vector3 GetKeyPosition(Character@ object, float t)
+    {
+        Vector4 motionOut = GetKey(t);
+        Node@ _node = object.GetNode();
+        return _node.worldRotation * Vector3(motionOut.x, motionOut.y, motionOut.z) + _node.worldPosition;
     }
 
     float GetFutureRotation(Character@ object, float t)
@@ -241,7 +324,7 @@ class Motion
         if (looped)
             return AngleDiff(object.GetNode().worldRotation.eulerAngles.y + object.motion_deltaRotation + GetKey(t).w);
         else
-            return AngleDiff(object.motion_startRotation + + object.motion_deltaRotation + GetKey(t).w);
+            return AngleDiff(object.motion_rotation + object.motion_deltaRotation + GetKey(t).w);
     }
 
     void Start(Character@ object, float localTime = 0.0f, float blendTime = 0.1, float speed = 1.0f)
@@ -260,7 +343,13 @@ class Motion
         Node@ _node = object.GetNode();
         Vector4 motionOut = GetKey(t);
         Vector3 motionPos = Quaternion(0, targetRotation, 0) * Vector3(motionOut.x, motionOut.y, motionOut.z) + object.motion_startPosition + object.motion_deltaPosition;
+
+        // gDebugMgr.AddCross(motionPos, 5.0f, BLACK, 5.0f);
+
         Vector3 offsetPos = Quaternion(0, targetRotation + motionOut.w, 0) * dockAlignOffset;
+
+        // Print("GetDockAlignPositionAtTime t=" + t + " motion=" + motionOut.ToString());
+
         return motionPos + offsetPos;
     }
 
@@ -268,12 +357,14 @@ class Motion
     {
         object.motion_startPosition = object.GetNode().worldPosition;
         object.motion_startRotation = object.GetNode().worldRotation.eulerAngles.y;
+        object.motion_rotation = object.motion_startRotation;
         object.motion_deltaRotation = 0;
         object.motion_deltaPosition = Vector3(0, 0, 0);
         object.motion_velocity = Vector3(0, 0, 0);
         object.motion_translateEnabled = true;
         object.motion_rotateEnabled = true;
-        Print("motion " + animationName + " start start-position=" + object.motion_startPosition.ToString() + " start-rotation=" + object.motion_startRotation);
+        if (d_log)
+            LogPrint("motion " + animationName + " start start-position=" + object.motion_startPosition.ToString() + " start-rotation=" + object.motion_startRotation);
     }
 
     int Move(Character@ object, float dt)
@@ -287,7 +378,7 @@ class Motion
         if (absSpeed < 0.001)
             return 0;
 
-        dt *= absSpeed;
+        // dt *= absSpeed;
         if (looped || speed < 0)
         {
             Vector4 motionOut = Vector4(0, 0, 0, 0);
@@ -304,22 +395,22 @@ class Motion
             if (object.motion_translateEnabled)
             {
                 Vector3 tLocal(motionOut.x, motionOut.y, motionOut.z);
-                // tLocal = tLocal * ctrl.GetWeight(animationName);
+                Vector3 tWorld = _node.worldRotation * tLocal;
 
-                if (object.physicsType == 0)
+                /*if (object.physicsType == 0)
                 {
-                    Vector3 tWorld = _node.worldRotation * tLocal + _node.worldPosition + object.motion_velocity * dt;
-                    object.MoveTo(tWorld, dt);
+                    object.MoveTo(tWorld + _node.worldPosition + object.motion_velocity * dt, dt);
                 }
                 else
                 {
-                    Vector3 tWorld = _node.worldRotation * tLocal;
                     object.SetVelocity(tWorld / dt + object.motion_velocity);
-                }
-
+                }*/
+                object.MoveTo(tWorld + _node.worldPosition + object.motion_velocity * dt, dt);
             }
             else
-                object.SetVelocity(Vector3(0, 0, 0));
+            {
+                object.SetVelocity(Vector3::ZERO);
+            }
 
             if (speed < 0 && localTime < 0.001)
                 return 1;
@@ -334,24 +425,29 @@ class Motion
 
             if (object.motion_translateEnabled)
             {
-                if (object.physicsType == 0)
+                /*if (object.physicsType == 0)
                 {
                     object.motion_deltaPosition += object.motion_velocity * dt;
-                    Vector3 tWorld = Quaternion(0, object.motion_startRotation + object.motion_deltaRotation, 0) * Vector3(motionOut.x, motionOut.y, motionOut.z) + object.motion_startPosition + object.motion_deltaPosition;
+                    Vector3 tWorld = Quaternion(0, object.motion_rotation, 0) * Vector3(motionOut.x, motionOut.y, motionOut.z) + object.motion_startPosition + object.motion_deltaPosition;
                     object.MoveTo(tWorld, dt);
                 }
                 else
                 {
-                    Vector3 tWorld1 = Quaternion(0, object.motion_startRotation + object.motion_deltaRotation, 0) * Vector3(motionOut.x, motionOut.y, motionOut.z);
+                    Vector3 tWorld1 = Quaternion(0, object.motion_rotation, 0) * Vector3(motionOut.x, motionOut.y, motionOut.z);
                     motionOut = GetKey(localTime + dt);
-                    Vector3 tWorld2 = Quaternion(0, object.motion_startRotation + object.motion_deltaRotation, 0) * Vector3(motionOut.x, motionOut.y, motionOut.z);
+                    Vector3 tWorld2 = Quaternion(0, object.motion_rotation, 0) * Vector3(motionOut.x, motionOut.y, motionOut.z);
                     Vector3 vel = (tWorld2 - tWorld1) / dt;
                     object.SetVelocity(vel + object.motion_velocity);
-                }
+                }*/
+
+                object.motion_deltaPosition += object.motion_velocity * dt;
+                Vector3 tWorld = Quaternion(0, object.motion_rotation, 0) * Vector3(motionOut.x, motionOut.y, motionOut.z) + object.motion_startPosition + object.motion_deltaPosition;
+                object.MoveTo(tWorld, dt);
             }
             else
-                object.SetVelocity(Vector3(0, 0, 0));
-
+            {
+                object.SetVelocity(Vector3::ZERO);
+            }
 
             if (!dockAlignBoneName.empty)
             {
@@ -360,8 +456,6 @@ class Motion
             }
 
             bool bFinished = (speed > 0) ? localTime >= endTime : (localTime < 0.001);
-            //if (bFinished)
-            //    object.SetVelocity(Vector3(0, 0, 0));
             return bFinished ? 1 : 0;
         }
     }
@@ -388,7 +482,7 @@ class Motion
             //Vector3 v = _node.LocalToWorld(dockAlignOffset);
             //debug.AddLine(_node.worldPosition, v, BLUE, false);
             //debug.AddCross(v, 0.5f, GREEN, false);
-            debug.AddCross(_node.GetChild(dockAlignBoneName, true).worldPosition, 0.25f, GREEN, false);
+            debug.AddCross(_node.GetChild(dockAlignBoneName, true).worldPosition, 0.5f, GREEN, false);
             //debug.AddNode(_node.GetChild(dockAlignBoneName, true), 0.25f, false);
         }
     }
@@ -400,11 +494,29 @@ class Motion
 
     float GetStartRot()
     {
-        return -rotateAngle;
+        return startFromOrigin.w;
+    }
+
+    Vector3 GetVelocity()
+    {
+        if (motionKeys.empty)
+            return Vector3(0, 0, 0);
+        Vector4 v = motionKeys[motionKeys.length - 1];
+        return  Vector3(v.x, v.y, v.z) / endTime;
+    }
+
+    int opCmp(const Motion&in obj)
+    {
+        if (dockDist > obj.dockDist)
+            return 1;
+        else if (dockDist < obj.dockDist)
+            return -1;
+        else
+            return 0;
     }
 };
 
-enum MotionLoadingStateType
+enum MotionLoadingState
 {
     MOTION_LOADING_START = 0,
     MOTION_LOADING_MOTIONS,
@@ -424,12 +536,12 @@ class MotionManager
 
     MotionManager()
     {
-        Print("MotionManager");
+        LogPrint("MotionManager");
     }
 
     ~MotionManager()
     {
-        Print("~MotionManager");
+        LogPrint("~MotionManager");
     }
 
     Motion@ FindMotion(StringHash nameHash)
@@ -469,16 +581,16 @@ class MotionManager
     {
         PostProcess();
         AssetPostProcess();
-        Print("************************************************************************************************");
-        Print("Motion Process time-cost=" + String(time.systemTime - assetProcessTime) + " ms num-of-motions=" + motions.length + " memory-use=" + String(memoryUse/1024) + " KB");
-        Print("************************************************************************************************");
+        LogPrint("************************************************************************************************");
+        LogPrint("Motion Process time-cost=" + String(time.systemTime - assetProcessTime) + " ms num-of-motions=" + motions.length + " memory-use=" + String(memoryUse/1024) + " KB");
+        LogPrint("************************************************************************************************");
     }
 
     void PostProcess()
     {
         uint t = time.systemTime;
         AddTriggers();
-        Print("MotionManager::PostProcess time-cost=" + (time.systemTime - t) + " ms");
+        LogPrint("MotionManager::PostProcess time-cost=" + (time.systemTime - t) + " ms");
     }
 
     void AddTriggers()
@@ -489,7 +601,11 @@ class MotionManager
     {
     }
 
-    Motion@ CreateMotion(const String&in name, int motionFlag = kMotion_XZR, int allowMotion = kMotion_XZR,  int endFrame = -1, bool loop = false, float rotateAngle = 361)
+    Motion@ CreateMotion(const String&in name,
+        int motionFlag = kMotion_XZR,
+        int allowMotion = kMotion_XZR,
+        int endFrame = -1,
+        bool loop = false)
     {
         Motion@ motion = Motion();
         motion.SetName(name);
@@ -497,7 +613,6 @@ class MotionManager
         motion.allowMotion = allowMotion;
         motion.looped = loop;
         motion.endFrame = endFrame;
-        motion.rotateAngle = rotateAngle;
         motions.Push(motion);
         return motion;
     }
@@ -525,7 +640,7 @@ class MotionManager
                     break;
             }
 
-            Print("MotionManager Process this frame time=" + (time.systemTime - t) + " ms " + " processedMotions=" + processedMotions);
+            LogPrint("MotionManager Process this frame time=" + (time.systemTime - t) + " ms " + " processedMotions=" + processedMotions);
             if (processedMotions >= len)
                 state = MOTION_LOADING_ANIMATIONS;
         }
@@ -535,14 +650,18 @@ class MotionManager
             uint t = time.systemTime;
             for (int i=processedAnimations; i<len; ++i)
             {
-                cache.GetResource("Animation", GetAnimationName(animations[i]));
+                Animation@ anim = cache.GetResource("Animation", GetAnimationName(animations[i]));
+                // FixAnimation(anim);
+                if (anim is null)
+                    LogPrint("Animation load failed --> " + animations[i]);
+
                 ++processedAnimations;
                 int time_diff = int(time.systemTime - t);
                 if (time_diff >= PROCESS_TIME_PER_FRAME)
                     break;
             }
 
-            Print("MotionManager Process this frame time=" + (time.systemTime - t) + " ms " + " processedAnimations=" + processedAnimations);
+            LogPrint("MotionManager Process this frame time=" + (time.systemTime - t) + " ms " + " processedAnimations=" + processedAnimations);
 
             if (processedAnimations >= len)
             {
@@ -560,12 +679,18 @@ class MotionManager
     }
 };
 
-
-MotionManager@ gMotionMgr;
-
-Motion@ Global_CreateMotion(const String&in name, int motionFlag = kMotion_XZR, int allowMotion = kMotion_ALL, int endFrame = -1, bool loop = false, float rotateAngle = 361)
+Motion@ Global_CreateMotion(const String&in name, int motionFlag = kMotion_XZR, int allowMotion = kMotion_ALL, int endFrame = -1, bool loop = false)
 {
-    return gMotionMgr.CreateMotion(name, motionFlag, allowMotion, endFrame, loop, rotateAngle);
+    // LogPrint("Global_CreateMotion " + name);
+    return gMotionMgr.CreateMotion(name, motionFlag, allowMotion, endFrame, loop);
+}
+
+Motion@ Global_CreateMotion(const String&in name, int motionFlag, const String& dockBoneName, int dockFrame, int type = -1)
+{
+    // LogPrint("Global_CreateMotion " + name);
+    Motion@ m = Global_CreateMotion(name, motionFlag);
+    m.SetDockAlign(dockBoneName, dockFrame);
+    return m;
 }
 
 void Global_AddAnimation(const String&in name)
@@ -573,9 +698,36 @@ void Global_AddAnimation(const String&in name)
     gMotionMgr.AddAnimation(name);
 }
 
-void Global_CreateMotion_InFolder(const String&in folder)
+void Global_CreateMotion_InFolder(const String&in folder, Array<String>@ preFixToIgnore = null, Array<Motion@>@ motions = null, int motionFlag = kMotion_XZR)
 {
-    Array<String> attack_animations = fileSystem.ScanDir("MyData/Animations/" + folder, "*.ani", SCAN_FILES, false);
-    for (uint i=0; i<attack_animations.length; ++i)
-        Global_CreateMotion(folder + FileNameToMotionName(attack_animations[i]));
+    String searchFolder = "MyData/Animations/" + folder;
+    if (GetPlatform() == "Android")
+    {
+        searchFolder = "/apk/" + searchFolder;
+    }
+    Array<String> animations = fileSystem.ScanDir(searchFolder, "*.ani", SCAN_FILES, false);
+    LogPrint("Global_CreateMotion_InFolder folder=" + searchFolder + " animations.size=" + animations.length);
+    for (uint i=0; i<animations.length; ++i)
+    {
+        bool toIgnore = false;
+        if (preFixToIgnore !is null)
+        {
+            for (uint j=0; j<preFixToIgnore.length; ++j)
+            {
+                if (animations[i].StartsWith(preFixToIgnore[j]))
+                {
+                    toIgnore = true;
+                    break;
+                }
+            }
+        }
+        if (toIgnore)
+            continue;
+
+        String name = folder + FileNameToMotionName(animations[i]);
+        Print("Global_CreateMotion(\"" + name + "\");");
+        Motion@ m = Global_CreateMotion(name);
+        if (motions !is null)
+            motions.Push(m);
+    }
 }

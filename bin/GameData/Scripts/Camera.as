@@ -3,14 +3,13 @@
 //    Camera Controller Logic Class
 //
 // ==============================================
-const StringHash TARGET_POSITION("TargetPosition");
-const StringHash TARGET_ROTATION("TargetRotation");
-const StringHash TARGET_CONTROLLER("TargetController");
-const StringHash TARGET_FOV("TargetFOV");
-
-const float BASE_FOV = 45.0f;
-const float CAMERA_RADIUS = 0.1f;
-String CAMERA_NAME = "Camera";
+float DampingCurve(float x, float dampingPercent)
+{
+    x = Clamp(x, 0.0f, 1.0f);
+    float a = Lerp(2, .25f, dampingPercent);
+    float b = 1 - Pow(x, a);
+    return b * b * b;
+}
 
 class CameraController
 {
@@ -27,36 +26,33 @@ class CameraController
 
     void Update(float dt)
     {
-
     }
 
     void OnCameraEvent(VariantMap& eventData)
     {
-
     }
 
     void Enter()
     {
-        renderer.viewports[0].camera = camera;
     }
 
     void Exit()
     {
+    }
 
+    bool IsDebugCamera()
+    {
+        return false;
     }
 
     void UpdateView(const Vector3&in position, const Vector3& lookat, float blend)
     {
         Vector3 cameraPos = cameraNode.worldPosition;
-        Vector3 vPos = position;
-
         Vector3 diff = position - cameraPos;
-        Vector3 pos = cameraPos + diff * blend;
+        cameraNode.worldPosition = cameraPos + diff * blend;
         Vector3 target = gCameraMgr.cameraTarget;
         diff = lookat - target;
         target += diff * blend;
-
-        cameraNode.worldPosition = pos;
         cameraNode.LookAt(target);
         gCameraMgr.cameraTarget = target;
     }
@@ -68,12 +64,10 @@ class CameraController
 
     void Reset()
     {
-
     }
 
     void DebugDraw(DebugRenderer@ debug)
     {
-        /*
         float w = float(graphics.width);
         float h = float(graphics.height);
         float w1 = w;
@@ -99,7 +93,24 @@ class CameraController
             debug.AddLine(camera.ScreenToWorldPoint(Vector3(x/w1, gap/h1, depth)), camera.ScreenToWorldPoint(Vector3(x/w1, (h + gap)/h1, depth)), c, false);
             x += step;
         }
-        */
+    }
+
+    bool IsCameraOccluded(const Vector3&in position, const Vector3& lookat, Vector3&out outPos)
+    {
+        if (!camera_collison)
+            return false;
+        Vector3 dir = position - lookat;
+        float rayDistance = dir.length - 0.5f;
+        dir.Normalize();
+        const float CAMERA_SPHERE_RADIUS = 0.25f;
+        PhysicsRaycastResult result = PhysicsSphereCast(lookat, dir, CAMERA_SPHERE_RADIUS, rayDistance, COLLISION_LAYER_LANDSCAPE, false);
+        if (result.body !is null)
+        {
+            outPos = result.position + result.normal * CAMERA_SPHERE_RADIUS;
+            // Print("IsCameraOccluded by " + result.body.node.name + " lookat=" + lookat.ToString() + " position=" + position.ToString());
+            return true;
+        }
+        return false;
     }
 };
 
@@ -112,13 +123,8 @@ class DebugFPSCameraController: CameraController
     DebugFPSCameraController(Node@ n, const String&in name)
     {
         super(n, name);
-    }
-
-    void Enter()
-    {
-        yaw = cameraNode.worldRotation.eulerAngles.y;
-        pitch = cameraNode.worldRotation.eulerAngles.x;
-        CameraController::Enter();
+        yaw = n.worldRotation.eulerAngles.y;
+        pitch = n.worldRotation.eulerAngles.x;
     }
 
     void Update(float dt)
@@ -130,8 +136,8 @@ class DebugFPSCameraController: CameraController
         const float MOUSE_SENSITIVITY = 0.1f;
 
         float speed = MOVE_SPEED;
-        if (input.keyDown[KEY_LSHIFT])
-            speed *= 2;
+        if (input.keyDown[KEY_LSHIFT] || input.keyDown[KEY_RSHIFT])
+            speed *= 4;
 
         IntVector2 mouseMove = input.mouseMove;
         yaw += MOUSE_SENSITIVITY * mouseMove.x;
@@ -149,98 +155,22 @@ class DebugFPSCameraController: CameraController
         if (input.keyDown[KEY_RIGHT])
             cameraNode.Translate(Vector3(1.0f, 0.0f, 0.0f) * speed * dt);
     }
-};
 
-class ThirdPersonCameraController : CameraController
-{
-    float   cameraSpeed = 7.5f;
-    float   cameraDistance = 7.5f;
-    float   targetCameraDistance = 4;
-    float   cameraDistSpeed = 5.0f;
-    Vector3 targetOffset = Vector3(0.65, 3.75, 0);
-
-    ThirdPersonCameraController(Node@ n, const String&in name)
+    bool IsDebugCamera()
     {
-        super(n, name);
-    }
-
-    void Update(float dt)
-    {
-        targetCameraDistance = GetPlayer().HasFlag(FLAGS_RUN) ? 5 : 4;
-        cameraDistance += (targetCameraDistance - cameraDistance) * dt * cameraDistSpeed;
-
-        Vector3 from, to;
-        CaculateView(from, to);
-
-        CollisionShape@ shape = cameraNode.GetComponent("CollisionShape");
-        Quaternion r = Quaternion();
-        PhysicsRaycastResult result = cameraNode.scene.physicsWorld.ConvexCast(shape, to, r, from, r, COLLISION_LAYER_LANDSCAPE);
-        if (result.body !is null)
-        {
-            from = result.position + result.normal * CAMERA_RADIUS;
-        }
-
-        UpdateView(from, to, dt * cameraSpeed);
-    }
-
-    void CaculateView(Vector3&out from, Vector3&out to)
-    {
-        Vector3 target_pos = GetPlayer().GetNode().worldPosition;
-        Vector3 offset = cameraNode.worldRotation * targetOffset;
-        target_pos += offset;
-
-        Vector3 v = gInput.GetRightAxis();
-        float pitch = v.y;
-        float yaw = v.x;
-
-        if (gCameraMgr.debugCameraController !is null)
-        {
-            yaw = GetPlayer().GetCharacterAngle();
-        }
-        else
-        {
-            pitch = Clamp(pitch, -20.0f, 35.0f);
-            gInput.m_rightStickY = pitch;
-        }
-
-        Quaternion q(pitch, yaw, 0);
-        from = q * Vector3(0, 0, -cameraDistance) + target_pos;
-        to = target_pos;
-    }
-
-    String GetDebugText()
-    {
-        return "camera fov=" + camera.fov + " position=" + cameraNode.worldPosition.ToString()  + " distance=" + cameraDistance + " targetOffset=" + targetOffset.ToString() + "\n";
-    }
-
-    void Reset()
-    {
-        //Player@ p = GetPlayer();
-        //Vector3 offset = p.GetNode().worldRotation * targetOffset;
-        //Vector3 target_pos = p.GetNode().worldPosition + offset;
-        //Vector3 dir = target_pos - cameraNode.worldPosition;
-        //cameraNode.LookAt(target_pos);
-        //cameraDistance = dir.length;
-        //Vector3 angles = cameraNode.worldRotation.eulerAngles;
-        //gInput.m_rightStickY = angles.x;
-        //gInput.m_rightStickX = angles.y;
-        //gInput.m_rightStickMagnitude = gInput.m_rightStickX * gInput.m_rightStickX + gInput.m_rightStickY * gInput.m_rightStickY;
-        //Print("Camera Reset cameraDistance=" + cameraDistance + " angles=" + angles.ToString());
+        return true;
     }
 
     void Enter()
     {
-        Reset();
-        CameraController::Enter();
+        input.mouseMode = MM_RELATIVE;
+        yaw = cameraNode.worldRotation.eulerAngles.y;
+        pitch = cameraNode.worldRotation.eulerAngles.x;
     }
 
-    void DebugDraw(DebugRenderer@ debug)
+    void Exit()
     {
-        //debug.AddCross(gCameraMgr.cameraTarget, 0.1, RED, true);
-        //debug.AddCross(cameraNode.worldPosition, 0.1, BLUE, true);
-
-        debug.AddSphere(Sphere(gCameraMgr.cameraTarget, CAMERA_RADIUS), RED, true);
-        debug.AddSphere(Sphere(cameraNode.worldPosition, CAMERA_RADIUS), BLUE, true);
+        input.mouseMode = MM_FREE;
     }
 };
 
@@ -271,7 +201,6 @@ class TransitionCameraController : CameraController
     void Enter()
     {
         curTime = 0.0f;
-        CameraController::Enter();
     }
 
     void OnCameraEvent(VariantMap& eventData)
@@ -282,6 +211,76 @@ class TransitionCameraController : CameraController
         targetPosition = eventData[TARGET_POSITION].GetVector3();
         targetRotation = eventData[TARGET_ROTATION].GetQuaternion();
         targetController = eventData[TARGET_CONTROLLER].GetStringHash();
+    }
+};
+
+class DeathCameraController : CameraController
+{
+    uint    nodeId = M_MAX_UNSIGNED;
+    float   cameraSpeed = 3.5f;
+    float   cameraDist = 12.5f;
+    float   cameraHeight = 0.5f;
+    float   sideAngle = 0.0;
+    float   timeInState = 0.0f;
+
+    DeathCameraController(Node@ n, const String&in name)
+    {
+        super(n, name);
+    }
+
+    void Exit()
+    {
+        nodeId = M_MAX_UNSIGNED;
+        timeInState = 0;
+    }
+
+    void Update(float dt)
+    {
+        timeInState += dt;
+        Node@ _node = cameraNode.scene.GetNode(nodeId);
+        if (_node is null || timeInState > 7.5f)
+        {
+            gCameraMgr.SetCameraController(GAME_CAMEAR_NAME);
+            return;
+        }
+        Node@ playerNode = GetPlayer().GetNode();
+
+        Vector3 dir = _node.worldPosition - playerNode.worldPosition;
+        float angle = Atan2(dir.x, dir.z) + sideAngle;
+
+        Vector3 v1(Sin(angle) * cameraDist, cameraHeight, Cos(angle) * cameraDist);
+        v1 += _node.worldPosition;
+        Vector3 v2 = _node.worldPosition + playerNode.worldPosition;
+        v2 /= 2;
+        v2.y += CHARACTER_HEIGHT;
+
+        Vector3 occlued_pos;
+        if (IsCameraOccluded(v1, v2, occlued_pos))
+        {
+            v1 = occlued_pos;
+        }
+
+        UpdateView(v1, v2, dt * cameraSpeed);
+    }
+
+    void OnCameraEvent(VariantMap& eventData)
+    {
+        if (!eventData.Contains(NODE))
+            return;
+        nodeId = eventData[NODE].GetUInt();
+        Node@ _node = cameraNode.scene.GetNode(nodeId);
+        Node@ playerNode = GetPlayer().GetNode();
+        Vector3 dir = _node.worldPosition - playerNode.worldPosition;
+        float angle = Atan2(dir.x, dir.z);
+        float angle_1 = AngleDiff(angle - 90);
+        float angle_2 = AngleDiff(angle + 90);
+        float cur_angle = gCameraMgr.GetCameraAngle();
+        if (Abs(cur_angle - angle_1) > Abs(cur_angle - angle_2))
+            sideAngle = -90.0f;
+        else
+            sideAngle = +90.0f;
+
+        LogPrint("DeathCamera sideAngle="+sideAngle);
     }
 };
 
@@ -300,15 +299,10 @@ class AnimationCameraController : CameraController
     void Enter()
     {
         CreateAnimationNode();
-        CameraController::Enter();
     }
 
     void Update(float dt)
     {
-        Player@ p = GetPlayer();
-        if (p is null)
-            return;
-
         Node@ _node = script.defaultScene.GetNode(nodeId);
         Node@ n = _node.GetChild("Camera_ROOT", true);
         Vector3 v = GetTarget();
@@ -319,7 +313,7 @@ class AnimationCameraController : CameraController
         {
             // finished.
             // todo.
-            gCameraMgr.SetCameraController("ThirdPerson");
+            gCameraMgr.SetCameraController(GAME_CAMEAR_NAME);
         }
     }
 
@@ -355,7 +349,7 @@ class AnimationCameraController : CameraController
     {
         animation = animName;
         script.defaultScene.GetNode(nodeId).worldPosition = GetTarget();
-        PlayAnimation(CreateAnimationNode().GetComponent("AnimationController"), animName, LAYER_MOVE, false, 0.1f, 0.0f, 1.0f);
+        Global_PlayAnimation(CreateAnimationNode().GetComponent("AnimationController"), animName, LAYER_MOVE, false, 0.1f, 0.0f, 1.0f);
     }
 
     void OnCameraEvent(VariantMap& eventData)
@@ -374,11 +368,140 @@ class AnimationCameraController : CameraController
     }
 };
 
-class FixedCameraController : CameraController
+class LookAtCameraController: CameraController
 {
-    FixedCameraController(Node@ n, const String&in name)
+    Vector3 offset = Vector3(0.0, 15, -30);
+    Vector3 lookAtOffset = Vector3(0, 4, 0);
+    float cameraSpeed = 4.5;
+    float radius = 10.0f;
+
+    LookAtCameraController(Node@ n, const String&in name)
     {
         super(n, name);
+
+        Player@ p = GetPlayer();
+        if (p is null)
+            return;
+        Node@ _node = p.GetNode();
+        Vector3 camera_pos = offset + _node.worldPosition;
+        Vector3 target_pos = _node.worldPosition + lookAtOffset;
+        cameraNode.worldPosition = camera_pos;
+        cameraNode.LookAt(target_pos);
+    }
+
+    void Update(float dt)
+    {
+        Player@ p = GetPlayer();
+        if (p is null)
+            return;
+        Node@ _node = p.GetNode();
+    }
+};
+
+class ThirdPersonCameraController : CameraController
+{
+    float   cameraSpeed = 7.5f;
+    float   cameraDistance = 9.0f;
+    float   targetCameraDistance = 20;
+    float   cameraDistSpeed = 10.0f;
+    float   pitch = 45;
+    float   yaw = 0;
+    Vector3 targetOffset = Vector3(0, 3.5, 0);
+
+    bool shaking = false;
+    // How long the object should shake for.
+    float shakeDuration = 0.0f;
+
+    // Amplitude of the shake. A larger value shakes the camera harder.
+    float shakeAmount = 0.7f;
+    float decreaseFactor = 1.0f;
+
+    float dampingPercent = 0.5f;
+    float completionPercent = 0.0f;
+    float originDuration = 0.0f;
+
+    ThirdPersonCameraController(Node@ n, const String&in name)
+    {
+        super(n, name);
+    }
+
+    void Update(float dt)
+    {
+        Player@ p = GetPlayer();
+        if (p is null)
+            return;
+        Node@ _node = p.GetNode();
+
+        Vector3 target_pos = _node.worldPosition;
+        // Vector3 offset = cameraNode.worldRotation * this.targetOffset;
+        target_pos += this.targetOffset;
+
+        this.cameraDistance = Lerp(this.cameraDistance, this.targetCameraDistance, dt * this.cameraDistSpeed);
+
+        float pitch = this.pitch;
+        float yaw = this.yaw;
+
+        Vector3 pos = Quaternion(pitch, yaw, 0) * Vector3(0, 0, -this.cameraDistance) + target_pos;
+
+        Vector3 occlued_pos;
+        if (IsCameraOccluded(pos, target_pos, occlued_pos))
+        {
+            for (int i=0; i<20; ++i)
+            {
+                pitch += i * 15;
+                pos = Quaternion(pitch, yaw, 0) * Vector3(0, 0, -this.cameraDistance) + target_pos;
+
+                if (!IsCameraOccluded(pos, target_pos, occlued_pos))
+                    break;
+            }
+
+            // this.yaw = yaw;
+            pos = Quaternion(pitch, this.yaw, 0) * Vector3(0, 0, -this.cameraDistance) + target_pos;
+            UpdateView(pos, target_pos, dt * this.cameraSpeed);
+        }
+        else
+        {
+            UpdateView(pos, target_pos, dt * this.cameraSpeed);
+        }
+
+        if (this.shaking)
+        {
+            this.completionPercent += dt / this.originDuration;
+            float dampingFactor = DampingCurve (completionPercent, this.dampingPercent);
+            const float max_angle = 15.0f;
+            float x = (Random(1.0f) - 0.5f) * this.shakeAmount * dampingFactor * max_angle;
+            float y =  (Random(1.0f) - 0.5f) * this.shakeAmount * dampingFactor * max_angle;
+            float z =  (Random(1.0f) - 0.5f) * this.shakeAmount * dampingFactor * max_angle;
+            this.shakeDuration -= dt * this.decreaseFactor;
+            cameraNode.rotation = cameraNode.rotation * Quaternion(x, y, z);
+
+            if (this.shakeDuration <= 0.0f)
+                this.shaking = false;
+        }
+
+    }
+
+    void ShakeCamera(float amount, float duration)
+    {
+        if (!camera_shake)
+            return;
+        LogPrint("ShakeCamera amount=" + amount + " duration=" + duration + " shaking=" + shaking);
+        this.shakeAmount = amount;
+        this.shakeDuration = duration;
+        this.shaking = true;
+        this.completionPercent = 0.0f;
+        this.originDuration = duration;
+    }
+
+    String GetDebugText()
+    {
+        return "camera fov=" + camera.fov + " position=" + cameraNode.worldPosition.ToString()  + " distance=" + cameraDistance + " targetOffset=" + targetOffset.ToString() + "\n";
+    }
+
+    void OnCameraEvent(VariantMap& eventData)
+    {
+        if (eventData[NAME].GetStringHash() == StringHash("Shake"))
+            ShakeCamera(eventData[VALUE].GetFloat(), eventData[DURATION].GetFloat());
     }
 };
 
@@ -388,9 +511,7 @@ class CameraManager
     CameraController@           currentController;
     Node@                       cameraNode;
     Vector3                     cameraTarget;
-
-    Node@                       debugCameraNode;
-    CameraController@           debugCameraController;
+    Array<StringHash>           cameraAnimations;
 
     CameraController@ FindCameraController(const StringHash&in nameHash)
     {
@@ -405,6 +526,7 @@ class CameraManager
 
     void SetCameraController(const String&in name)
     {
+        LogPrint("SetCameraController --> " + name);
         SetCameraController(StringHash(name));
     }
 
@@ -421,34 +543,36 @@ class CameraManager
             currentController.Enter();
     }
 
-    void Start(Scene@ scene_)
+    void Start(Node@ n)
     {
-        cameraNode = scene_.CreateChild(CAMERA_NAME);
-        Camera@ cam = cameraNode.CreateComponent("Camera");
-        cam.fov = BASE_FOV;
-        cameraNode.worldPosition = Vector3(0, 10, -5);
+        cameraNode = n;
+        cameraControllers.Push(DebugFPSCameraController(n, "Debug"));
+        cameraControllers.Push(TransitionCameraController(n, "Transition"));
+        cameraControllers.Push(DeathCameraController(n, "Death"));
+        cameraControllers.Push(AnimationCameraController(n, "Animation"));
+        cameraControllers.Push(LookAtCameraController(n, "LookAt"));
+        cameraControllers.Push(ThirdPersonCameraController(n, "ThirdPerson"));
 
-        cameraControllers.Clear();
-        cameraControllers.Push(ThirdPersonCameraController(cameraNode, "ThirdPerson"));
-        cameraControllers.Push(TransitionCameraController(cameraNode, "Transition"));
-        cameraControllers.Push(AnimationCameraController(cameraNode, "Animation"));
-        cameraControllers.Push(FixedCameraController(cameraNode, "Fixed"));
-
-        CollisionShape@ cameraSphere = cameraNode.CreateComponent("CollisionShape");
-        cameraSphere.SetSphere(CAMERA_RADIUS);
-
-        debugCameraNode = scene_.CreateChild(CAMERA_NAME + "_Debug");
-        debugCameraNode.CreateComponent("Camera");
-        debugCameraNode.worldPosition = cameraNode.worldPosition;
-        cameraControllers.Push(DebugFPSCameraController(debugCameraNode, "Debug"));
+        /*
+        cameraAnimations.Push(StringHash("Counter_Arm_Back_05"));
+        cameraAnimations.Push(StringHash("Counter_Arm_Back_06"));
+        cameraAnimations.Push(StringHash("Counter_Arm_Front_07"));
+        cameraAnimations.Push(StringHash("Counter_Arm_Front_09"));
+        cameraAnimations.Push(StringHash("Counter_Arm_Front_13"));
+        cameraAnimations.Push(StringHash("Counter_Arm_Front_14"));
+        cameraAnimations.Push(StringHash("Counter_Leg_Back_04"));
+        cameraAnimations.Push(StringHash("Counter_Leg_Front_07"));
+        cameraAnimations.Push(StringHash("Double_Counter_2ThugsA"));
+        cameraAnimations.Push(StringHash("Double_Counter_2ThugsB"));
+        cameraAnimations.Push(StringHash("Double_Counter_2ThugsG"));
+        cameraAnimations.Push(StringHash("Double_Counter_2ThugsH"));
+        cameraAnimations.Push(StringHash("Double_Counter_3ThugsB"));
+        */
     }
 
     void Stop()
     {
-        cameraNode.Remove();
         @cameraNode = null;
-        debugCameraNode.Remove();
-        @debugCameraNode = null;
         cameraControllers.Clear();
     }
 
@@ -456,86 +580,92 @@ class CameraManager
     {
         if (currentController !is null)
             currentController.Update(dt);
-        if (debugCameraController !is null)
-            debugCameraController.Update(dt);
     }
 
     Node@ GetCameraNode()
     {
-        return (debugCameraController is null) ? cameraNode : debugCameraNode;
+        return cameraNode;
     }
 
     Camera@ GetCamera()
     {
-        return GetCameraNode().GetComponent("Camera");
+        if (cameraNode is null)
+            return null;
+        return cameraNode.GetComponent("Camera");
     }
 
     Vector3 GetCameraForwardDirection()
     {
-        return GetCameraNode().worldRotation * Vector3(0, 0, 1);
+        return cameraNode.worldRotation * Vector3(0, 0, 1);
     }
 
     float GetCameraAngle()
     {
+        /*
+        if (currentController !is null)
+        {
+            if (currentController.IsDebugCamera())
+                return 0;
+        }
+        */
+
         Vector3 dir = GetCameraForwardDirection();
         return Atan2(dir.x, dir.z);
     }
 
     void DebugDraw(DebugRenderer@ debug)
     {
+        //debug.AddCross(cameraTarget, 1.0f, RED, false);
         if (currentController !is null)
             currentController.DebugDraw(debug);
-        if (debugCameraController !is null)
-            debugCameraController.DebugDraw(debug);
     }
 
     void OnCameraEvent(VariantMap& eventData)
     {
         StringHash name = eventData[NAME].GetStringHash();
         if (name == CHANGE_STATE)
-            SetCameraController(eventData[VALUE].GetStringHash());
+            SetCameraController(eventData[STATE].GetStringHash());
 
         if (currentController !is null)
             currentController.OnCameraEvent(eventData);
     }
 
+    void CheckCameraAnimation(const String&in anim)
+    {
+        uint pos = anim.FindLast('/');
+        String name = anim.Substring(pos + 1);
+        //LogPrint("CheckCameraAnimation, name=" + name);
+        StringHash nameHash(name);
+        int k = -1;
+        for (uint i=0; i<cameraAnimations.length; ++i)
+        {
+            if (nameHash == cameraAnimations[i])
+            {
+                k = int(i);
+                break;
+            }
+        }
+
+        if (k < 0)
+            return;
+
+        String camAnim = GetAnimationName("BM_Combat_Cameras/" + name);
+        VariantMap eventData;
+        eventData[NAME] = CHANGE_STATE;
+        eventData[STATE] = StringHash("Animation");
+        eventData[ANIMATION] = camAnim;
+        LogPrint("camAnim=" + camAnim);
+
+        OnCameraEvent(eventData);
+    }
+
     String GetDebugText()
     {
-        String ret = (currentController !is null) ? currentController.GetDebugText() : "";
-        if (debugCameraController !is null)
-            ret += "Debug: " + debugCameraController.GetDebugText();
-        return ret;
+        return (currentController !is null) ? currentController.GetDebugText() : "";
     }
 
-    void SetDebugCamera(bool bFlag)
+    StringHash GetCurrentNameHash()
     {
-        if (bFlag)
-        {
-            @debugCameraController = FindCameraController(StringHash("Debug"));
-            if (debugCameraController !is null)
-            {
-                if (currentController !is null)
-                {
-                    // debugCameraController.cameraNode.worldPosition = currentController.cameraNode.worldPosition;
-                    debugCameraController.cameraNode.LookAt(cameraTarget);
-                }
-                debugCameraController.Enter();
-            }
-        }
-        else
-        {
-            if (debugCameraController !is null)
-            {
-                debugCameraController.Exit();
-                @debugCameraController = null;
-            }
-
-            if (currentController !is null)
-            {
-                currentController.Enter();
-            }
-        }
+        return (currentController !is null) ? currentController.nameHash : StringHash();
     }
 };
-
-CameraManager@ gCameraMgr = CameraManager();

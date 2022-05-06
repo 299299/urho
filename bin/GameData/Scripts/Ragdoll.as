@@ -34,13 +34,10 @@ const StringHash RAGDOLL_START("Ragdoll_Start");
 const StringHash RAGDOLL_STOP("Ragdoll_Stop");
 const StringHash RAGDOLL_ROOT("Ragdoll_Root");
 const StringHash VELOCITY("Velocity");
+const StringHash POSITION("Position");
 
-bool test_ragdoll = false;
 bool blend_to_anim = false;
 int ragdoll_method = 2;
-
-const StringHash T_BONE_NAME("Bip01_$AssimpFbx$_Translation");
-const StringHash R_BONE_NAME("Bip01_$AssimpFbx$_Rotation")
 
 class Ragdoll : ScriptObject
 {
@@ -50,9 +47,10 @@ class Ragdoll : ScriptObject
     Node@             rootNode;
 
     int               state = RAGDOLL_NONE;
-    int               state_request = -1;
-    bool              hasvelocity_request = false;
-    Vector3           velocity_request = Vector3(0, 0, 0);
+    int               stateRequest = -1;
+    bool              hasVelRequest = false;
+    Vector3           velocityRequest = Vector3(0, 0, 0);
+    Vector3           hitPosition;
 
     float             timeInState;
 
@@ -60,8 +58,8 @@ class Ragdoll : ScriptObject
     Animation@        blendingAnim_2;
 
     float             ragdollToAnimBlendTime = 1.0f;
-    float             minRagdollStateTime = 0.5f;
-    float             maxRagdollStateTime = 6.0f;
+    float             minRagdollStateTime = 1.5f;
+    float             maxRagdollStateTime = 5.0f;
 
     int               getUpIndex = 0;
 
@@ -111,7 +109,10 @@ class Ragdoll : ScriptObject
             boneLastRotations.Resize(maxLen);
 
         for (int i=0; i<maxLen; ++i)
+        {
             boneNodes[i] = node.GetChild(boneNames[i], true);
+            boneNodes[i].vars[NODE] = node.id;
+        }
 
         Node@ renderNode = node;
         AnimatedModel@ model = node.GetComponent("AnimatedModel");
@@ -168,8 +169,7 @@ class Ragdoll : ScriptObject
             return;
 
         int old_state = state;
-        if (d_log)
-            Print(rootNode.name + " Ragdoll ChangeState from " + old_state + " to " + newState);
+        LogPrint(rootNode.name + " RagdollComponent ChangeState from " + old_state + " to " + newState);
         state = newState;
 
         if (newState == RAGDOLL_STATIC)
@@ -184,7 +184,7 @@ class Ragdoll : ScriptObject
             SetAnimationEnabled(false);
             SetPhysicsEnabled(true);
 
-            if (timeInState > 0.05f)
+            if (timeInState > 0.033f)
             {
                 for (uint i=0; i<RAGDOLL_BONE_NUM; ++i)
                 {
@@ -195,24 +195,31 @@ class Ragdoll : ScriptObject
                         float scale = rootNode.vars[TIME_SCALE].GetFloat();
                         velocity /= timeInState;
                         velocity *= scale;
-                        // Print(boneNodes[i].name + " velocity=" + velocity.ToString());
+                        velocity *= 1.5f;
+                        // LogPrint(boneNodes[i].name + " velocity=" + velocity.ToString());
                         // if (i == BONE_PELVIS || i == BONE_SPINE)
                         rb.linearVelocity = velocity;
                     }
                 }
             }
 
-            if (hasvelocity_request)
+            if (hasVelRequest)
             {
-
                 for (uint i=0; i<RAGDOLL_BONE_NUM; ++i)
                 {
                     RigidBody@ rb = boneNodes[i].GetComponent("RigidBody");
                     if (rb !is null)
-                        rb.linearVelocity = velocity_request;
+                    {
+                        Vector3 pos = boneNodes[i].worldPosition;
+                        float y_diff = Abs(pos.y - hitPosition.y);
+                        if (d_log)
+                            LogPrint("Ragdoll -- " + boneNodes[i].name + " y_diff = " + y_diff);
+                        if (y_diff < 1.0f)
+                            rb.linearVelocity = velocityRequest;
+                    }
                 }
-                velocity_request = Vector3(0, 0, 0);
-                hasvelocity_request = false;
+                velocityRequest = Vector3(0, 0, 0);
+                hasVelRequest = false;
             }
         }
         else if (newState == RAGDOLL_BLEND_TO_ANIMATION)
@@ -225,7 +232,7 @@ class Ragdoll : ScriptObject
             {
                 boneLastPositions[i] = boneNodes[i].position;
                 boneLastRotations[i] = boneNodes[i].rotation;
-                Print(boneNodes[i].name + " last-position=" + boneLastPositions[i].ToString() + " last-rotation=" + boneLastRotations[i].eulerAngles.ToString());
+                LogPrint(boneNodes[i].name + " last-position=" + boneLastPositions[i].ToString() + " last-rotation=" + boneLastRotations[i].eulerAngles.ToString());
             }
         }
         else if (newState == RAGDOLL_NONE)
@@ -241,9 +248,9 @@ class Ragdoll : ScriptObject
 
     void FixedUpdate(float dt)
     {
-        if (state_request >= 0) {
-            ChangeState(state_request);
-            state_request = -1;
+        if (stateRequest >= 0) {
+            ChangeState(stateRequest);
+            stateRequest = -1;
         }
 
         if (state == RAGDOLL_STATIC)
@@ -252,11 +259,8 @@ class Ragdoll : ScriptObject
         }
         else if (state == RAGDOLL_DYNAMIC)
         {
-            // Print("Ragdoll Dynamic time " + timeInState);
+            // LogPrint("Ragdoll Dynamic time " + timeInState);
             timeInState += dt;
-
-            if (rootNode.vars[HEALTH].GetInt() <= 0)
-                return;
 
             uint num_of_freeze_objects = 0;
             for (uint i=0; i<RAGDOLL_BONE_NUM; ++i)
@@ -269,12 +273,12 @@ class Ragdoll : ScriptObject
                 }
 
                 Vector3 vel = rb.linearVelocity;
-                if (vel.lengthSquared < 0.01f)
+                if (vel.lengthSquared < 0.1f)
                     num_of_freeze_objects ++;
-                //Print(boneNodes[i].name + " vel=" + vel.ToString());
+                //LogPrint(boneNodes[i].name + " vel=" + vel.ToString());
             }
 
-            // Print("num_of_freeze_objects=" + num_of_freeze_objects);
+            // LogPrint("num_of_freeze_objects=" + num_of_freeze_objects);
             if (num_of_freeze_objects == RAGDOLL_BONE_NUM && timeInState >= minRagdollStateTime)
                 ChangeState(blend_to_anim ? RAGDOLL_BLEND_TO_ANIMATION : RAGDOLL_NONE);
             else if (timeInState > maxRagdollStateTime)
@@ -317,7 +321,7 @@ class Ragdoll : ScriptObject
 
     void CreateRagdoll()
     {
-        uint t = time.systemTime;
+        // uint t = time.systemTime;
 
         // Create RigidBody & CollisionShape components to bones
         Quaternion identityQ(0, 0, 0);
@@ -338,8 +342,8 @@ class Ragdoll : ScriptObject
         Vector3 lower_arm_offset_right(0.125f, 0.0f, -0.01f);
 
         CreateRagdollBone(BONE_PELVIS, SHAPE_BOX, Vector3(0.3f, 0.2f, 0.25f), Vector3(0.0f, 0.0f, 0.0f), identityQ);
-        CreateRagdollBone(BONE_SPINE, SHAPE_BOX, Vector3(0.35f, 0.2f, 0.3f), Vector3(0.15f, 0.0f, 0.0f), identityQ);
-        CreateRagdollBone(BONE_HEAD, SHAPE_BOX, Vector3(0.275f, 0.2f, 0.25f), Vector3(0.0f, 0.0f, 0.0f), identityQ);
+        CreateRagdollBone(BONE_SPINE, SHAPE_BOX, Vector3(0.55f, 0.3f, 0.4f), Vector3(0.2f, 0.0f, 0.0f), identityQ);
+        CreateRagdollBone(BONE_HEAD, SHAPE_BOX, Vector3(0.3f, 0.2f, 0.25f), Vector3(0.1f, 0.0f, 0.0f), identityQ);
 
         CreateRagdollBone(BONE_L_THIGH, SHAPE_CAPSULE, upper_leg_size, uppper_leg_offset, common_rotation);
         CreateRagdollBone(BONE_R_THIGH, SHAPE_CAPSULE, upper_leg_size, uppper_leg_offset, common_rotation);
@@ -376,7 +380,7 @@ class Ragdoll : ScriptObject
         CreateRagdollConstraint(boneNodes[BONE_R_FOREARM], boneNodes[BONE_R_UPPERARM], CONSTRAINT_HINGE, Vector3(0.0f, 0.0f, -1.0f),
             Vector3(0.0f, 0.0f, -1.0f), Vector2(90.0f, 0.0f), Vector2(0.0f, 0.0f));
 
-        Print("CreateRagdoll time-cost=" + (time.systemTime - t) + " ms");
+        // LogPrint("CreateRagdoll time-cost=" + (time.systemTime - t) + " ms");
     }
 
     void CreateRagdollBone(RagdollBoneType boneType, ShapeType type, const Vector3&in size, const Vector3&in position, const Quaternion&in rotation)
@@ -392,8 +396,8 @@ class Ragdoll : ScriptObject
         body.linearRestThreshold = 2.5f;
         body.angularRestThreshold = 1.5f;
         body.collisionLayer = COLLISION_LAYER_RAGDOLL;
-        body.collisionMask = COLLISION_LAYER_RAGDOLL | COLLISION_LAYER_PROP | COLLISION_LAYER_LANDSCAPE;
-        body.friction = 1.0f;
+        body.collisionMask = COLLISION_LAYER_RAGDOLL | COLLISION_LAYER_PROP | COLLISION_LAYER_LANDSCAPE | COLLISION_LAYER_CHARACTER;
+        body.friction = 2.0f;
         body.gravityOverride = Vector3(0, -32, 0);
         body.node.vars[RAGDOLL_ROOT] = rootNode.id;
         // body.kinematic = true;
@@ -402,13 +406,14 @@ class Ragdoll : ScriptObject
         //    body.angularFactor = Vector3(0, 0, 0);
 
         CollisionShape@ shape = boneNode.CreateComponent("CollisionShape");
+        const float ragdoll_size_scale = 100.0f;
         // We use either a box or a capsule shape for all of the bones
         if (type == SHAPE_BOX)
-            shape.SetBox(size * BONE_SCALE, position * BONE_SCALE, rotation);
+            shape.SetBox(size * ragdoll_size_scale, position * ragdoll_size_scale, rotation);
         else if (type == SHAPE_SPHERE)
-            shape.SetSphere(size.x * BONE_SCALE, position * BONE_SCALE, rotation);
+            shape.SetSphere(size.x * ragdoll_size_scale, position * ragdoll_size_scale, rotation);
         else
-            shape.SetCapsule(size.x * BONE_SCALE, size.y * BONE_SCALE, position * BONE_SCALE, rotation);
+            shape.SetCapsule(size.x * ragdoll_size_scale, size.y * ragdoll_size_scale, position * ragdoll_size_scale, rotation);
     }
 
     void CreateRagdollConstraint(Node@ boneNode, Node@ parentNode, ConstraintType type,
@@ -493,14 +498,15 @@ class Ragdoll : ScriptObject
 
     void HandleAnimationTrigger(StringHash eventType, VariantMap& eventData)
     {
-        OnAnimationTrigger(eventData[DATA].GetVariantMap());
+        if (eventData[DATA].type == VAR_VARIANTMAP)
+        {
+            OnAnimationTrigger(eventData[DATA].GetVariantMap());
+        }
     }
 
-    void OnAnimationTrigger(VariantMap& data)
+    void OnAnimationTrigger(const VariantMap&in eventData)
     {
-        StringHash name = data[NAME].GetStringHash();
-        int value = data[VALUE].GetInt();
-
+        StringHash name = eventData[NAME].GetStringHash();
         int new_state = RAGDOLL_NONE;
         if (name == RAGDOLL_PERPARE)
             new_state = RAGDOLL_STATIC;
@@ -508,14 +514,16 @@ class Ragdoll : ScriptObject
             new_state = RAGDOLL_DYNAMIC;
         else if (name == RAGDOLL_STOP)
             new_state = RAGDOLL_NONE;
+        else
+            return; // other animation events
 
-        state_request = new_state;
-
-        if (data.Contains(VELOCITY))
+        stateRequest = new_state;
+        if (eventData.Contains(VELOCITY))
         {
-            hasvelocity_request = true;
-            velocity_request = data[VELOCITY].GetVector3();
-            Print("velocity_request="+ velocity_request.ToString());
+            hasVelRequest = true;
+            velocityRequest = eventData[VELOCITY].GetVector3();
+            hitPosition = eventData[POSITION].GetVector3();
+            LogPrint(node.name + " RagdollComponent velocityRequest="+ velocityRequest.ToString() + " hitPosition=" + hitPosition.ToString());
         }
     }
 
@@ -526,13 +534,13 @@ class Ragdoll : ScriptObject
 
         // determine back or frong get up
         Vector3 pelvis_up = oldRot * Vector3(0, 1, 0);
-        Print("pelvis_up=" + pelvis_up.ToString());
+        //LogPrint("pelvis_up=" + pelvis_up.ToString());
 
         getUpIndex = 0;
         if (pelvis_up.y < 0)
             getUpIndex = 1;
 
-        Print("getUpIndex = " + getUpIndex);
+        //LogPrint("getUpIndex = " + getUpIndex);
         rootNode.vars[ANIMATION_INDEX] = getUpIndex;
 
         Vector3 head_pos = boneNodes[BONE_HEAD].worldPosition;
@@ -550,8 +558,8 @@ class Ragdoll : ScriptObject
         if (getUpIndex == 0)
             targetRootRot = targetRootRot * Quaternion(0, 180, 0);
 
-        Node@ t_node = rootNode.GetChild(T_BONE_NAME, true);
-        Node@ r_node = rootNode.GetChild(R_BONE_NAME, true);
+        Node@ t_node = rootNode.GetChild("Bip01_$AssimpFbx$_Translation", true);
+        Node@ r_node = rootNode.GetChild("Bip01_$AssimpFbx$_Rotation", true);
         Vector3 cur_root_pos = rootNode.worldPosition;
         Vector3 dest_root_pos = cur_root_pos;
         dest_root_pos.x = pelvis_pos.x;
@@ -570,7 +578,7 @@ class Ragdoll : ScriptObject
         }
 
         pelvis_bone.position = Vector3(0, 0, 0);
-        rootNode.worldPosition = dest_root_pos;
+        rootNode.worldPosition = FilterPosition(dest_root_pos);
 
         Quaternion q(90, 0, -90);
         pelvis_bone.rotation = q;
@@ -578,7 +586,7 @@ class Ragdoll : ScriptObject
         q = oldRot * q.Inverse();
         r_node.worldRotation = q;
 
-        // Print("targetRootRot=" + targetRootRot.eulerAngles.ToString());
+        // LogPrint("targetRootRot=" + targetRootRot.eulerAngles.ToString());
         // q = r_node.worldRotation;
         rootNode.worldRotation = targetRootRot;
         r_node.worldRotation = q;

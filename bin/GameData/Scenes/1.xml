@@ -1,0 +1,297 @@
+<?xml version="1.0"?>
+<scene id="1">
+	<attribute name="Name" value="" />
+	<attribute name="Time Scale" value="1" />
+	<attribute name="Smoothing Constant" value="50" />
+	<attribute name="Snap Threshold" value="5" />
+	<attribute name="Elapsed Time" value="1366.13" />
+	<attribute name="Next Replicated Node ID" value="63" />
+	<attribute name="Next Replicated Component ID" value="120" />
+	<attribute name="Next Local Node ID" value="16780689" />
+	<attribute name="Next Local Component ID" value="16778383" />
+	<attribute name="Variables" />
+	<attribute name="Variable Names" value="" />
+	<component type="Octree" id="1" />
+	<component type="DebugRenderer" id="2" />
+	<component type="PhysicsWorld" id="21" />
+	<component type="DynamicNavigationMesh" id="106">
+		<attribute name="Tile Size" value="64" />
+		<attribute name="Agent Height" value="5" />
+		<attribute name="Agent Radius" value="1.5" />
+		<attribute name="Navigation Data" value="0 0 208 193 0 0 0 192 0 0 208 193 0 0 208 65 0 0 128 63 0 0 208 65 3 0 0 0 3 0 0 0 0 0 208 193 0 0 0 192 0 0 208 193 154 153 153 65 154 153 153 65 0 1 0 0 0 64 0 0 0 0 208 193 0 0 0 192 0 0 208 193 154 153 153 62 205 204 76 62 64 0 0 0 64 0 0 0 0 0 160 64 0 0 192 63 102 102 102 63 102 102 166 63 144 0 0 0 0 4 0 0 82 76 84 68 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 208 193 207 204 76 62 0 0 208 193 152 153 217 192 207 204 76 62 152 153 217 192 11 0 11 0 64 64 9 63 9 63 0 0 179 0 0 0 82 76 84 68 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 208 193 207 204 76 62 0 0 208 193 152 153 217 192 207 204 76 62 152 153 217 192 11 0 11 0 64 64 9 63 9 63 0 0 31 255 1 0 255 255 55 31 0 1 0 35 5 127 2 15 63 0 35 15 64 0 255 255 255 255 255 255 255 255 255 255 255 255 255 59 15 2 0 255 255 56 31 63 1 0 35 5 128 2 15 63 0 35 15 64 0 255 255 255 255 255 255 255 255 255 255 255 255 255 68 15 2 0 255 255 47 47 6 7 1 0 33 21 67 119 2 47 14 15 1 0 33 31 75 64 0 255 255 255 255 255 255 255 255 255 255 255 255 255 3 47 44 45 1 0 29 80 45 45 45 45 105 82 76 84 68 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 151 153 217 192 207 204 76 62 0 0 208 193 104 102 70 65 207 204 76 62 152 153 217 192 11 0 11 0 64 64 0 63 9 63 30 19 149 0 0 0 82 76 84 68 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 151 153 217 192 207 204 76 62 0 0 208 193 104 102 70 65 207 204 76 62 152 153 217 192 11 0 11 0 64 64 0 63 9 63 30 19 31 255 1 0 255 255 46 31 0 1 0 255 255 255 255 255 255 255 255 255 255 255 255 255 255 255 251 31 63 1 0 255 255 255 255 255 255 255 255 255 255 255 255 255 185 15 191 29 255 255 47 47 22 7 1 0 42 63 67 30 15 1 0 42 31 75 64 0 255 255 255 255 255 255 255 255 255 255 255 255 249 47 60 45 1 0 38 80 45 45 45 45 105 82 76 84 68 1 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0 104 102 70 65 207 204 76 62 0 0 208 193 207 204 252 65 207 204 76 62 152 153 217 192 11 0 11 0 64 64 0 35 9 63 30 19 187 0 0 0 82 76 84 68 1 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0 104 102 70 65 207 204 76 62 0 0 208 193 207 204 252 65 207 204 76 62 152 153 217 192 11 0 11 0 64 64 0 35 9 63 30 19 31 255 1 0 255 255 46 31 0 1 0 16 15 99 2 9 15 63 0 16 15 64 0 255 255 255 255 255 255 255 255 255 255 255 255 255 123 15 2 0 255 255 11 31 63 1 0 16 15 64 2 9 15 63 0 16 15 64 0 255 255 255 255 255 255 255 255 255 255 255 255 255 87 15 2 0 255 255 47 47 22 7 1 0 14 31 3 100 2 9 47 30 15 1 0 14 31 11 64 0 255 255 255 255 255 255 255 255 255 255 255 255 255 22 47 60 45 1 0 14 31 41 64 13 4 80 0 0 0 0 0 82 76 84 68 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 208 193 207 204 76 62 151 153 217 192 152 153 217 192 207 204 76 62 104 102 70 65 11 0 11 0 64 64 9 63 0 63 30 19 167 0 0 0 82 76 84 68 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 208 193 207 204 76 62 151 153 217 192 152 153 217 192 207 204 76 62 104 102 70 65 11 0 11 0 64 64 9 63 0 63 30 19 20 255 1 0 31 0 1 0 35 4 63 0 31 255 63 0 35 15 64 0 255 255 255 255 255 255 255 255 255 255 255 255 255 255 255 125 5 2 0 31 63 1 0 35 15 64 0 255 255 255 255 255 255 255 255 255 255 255 255 255 255 255 197 47 134 135 1 0 33 21 195 0 16 47 14 15 1 0 33 31 75 64 0 255 255 255 255 255 255 255 255 255 255 255 255 255 255 255 69 47 44 45 1 0 29 80 45 45 45 45 105 82 76 84 68 1 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 151 153 217 192 207 204 76 62 151 153 217 192 104 102 70 65 207 204 76 62 104 102 70 65 11 0 11 0 64 64 0 63 0 63 30 19 141 0 0 0 82 76 84 68 1 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 151 153 217 192 207 204 76 62 151 153 217 192 104 102 70 65 207 204 76 62 104 102 70 65 11 0 11 0 64 64 0 63 0 63 30 19 31 0 1 0 255 255 255 255 255 255 255 255 255 255 255 255 255 255 255 251 31 63 1 0 255 255 255 255 255 255 255 255 255 255 255 255 255 255 255 251 47 150 135 1 0 42 63 195 30 15 1 0 42 31 75 64 0 255 255 255 255 255 255 255 255 255 255 255 255 255 255 255 60 47 60 45 1 0 38 80 45 45 45 45 105 82 76 84 68 1 0 0 0 2 0 0 0 1 0 0 0 0 0 0 0 104 102 70 65 207 204 76 62 151 153 217 192 207 204 252 65 207 204 76 62 104 102 70 65 11 0 11 0 64 64 0 35 0 63 30 19 180 0 0 0 82 76 84 68 1 0 0 0 2 0 0 0 1 0 0 0 0 0 0 0 104 102 70 65 207 204 76 62 151 153 217 192 207 204 252 65 207 204 76 62 104 102 70 65 11 0 11 0 64 64 0 35 0 63 30 19 31 0 1 0 16 31 255 1 0 8 15 63 0 16 31 0 63 0 8 15 64 0 255 255 255 255 255 255 255 255 255 255 255 255 255 255 255 125 31 63 1 0 16 15 164 15 9 15 63 0 16 15 64 0 255 255 255 255 255 255 255 255 255 255 255 255 255 255 255 153 47 150 135 1 0 14 31 131 192 15 9 47 30 15 1 0 14 31 11 64 0 255 255 255 255 255 255 255 255 255 255 255 255 255 255 255 88 47 60 45 1 0 14 31 41 128 15 4 80 0 0 0 0 0 82 76 84 68 1 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 208 193 207 204 76 62 104 102 70 65 152 153 217 192 207 204 76 62 207 204 252 65 11 0 11 0 64 64 9 63 0 35 30 19 180 0 0 0 82 76 84 68 1 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 208 193 207 204 76 62 104 102 70 65 152 153 217 192 207 204 76 62 207 204 252 65 11 0 11 0 64 64 9 63 0 35 30 19 20 255 1 0 31 0 1 0 35 4 63 0 31 255 63 0 35 15 64 0 255 255 255 255 255 255 255 255 127 15 2 0 255 255 255 255 255 255 234 5 183 15 31 63 1 0 35 15 64 0 255 255 255 255 255 255 255 255 190 15 2 0 255 255 255 255 255 255 243 47 134 135 1 0 33 21 195 55 7 47 14 15 1 0 33 31 75 64 0 255 255 255 255 255 255 255 255 62 47 12 13 1 0 33 21 73 128 8 15 2 0 255 255 255 255 255 255 229 80 0 0 0 0 0 82 76 84 68 1 0 0 0 1 0 0 0 2 0 0 0 0 0 0 0 151 153 217 192 207 204 76 62 104 102 70 65 104 102 70 65 207 204 76 62 207 204 252 65 11 0 11 0 64 64 0 63 0 35 30 19 152 0 0 0 82 76 84 68 1 0 0 0 1 0 0 0 2 0 0 0 0 0 0 0 151 153 217 192 207 204 76 62 104 102 70 65 104 102 70 65 207 204 76 62 207 204 252 65 11 0 11 0 64 64 0 63 0 35 30 19 31 0 1 0 255 255 255 255 255 255 255 255 244 31 255 1 0 255 255 255 255 255 255 242 31 63 1 0 255 255 255 255 255 255 255 255 244 15 255 24 255 255 255 255 255 255 243 47 150 135 1 0 42 63 195 30 15 1 0 42 31 75 64 0 255 255 255 255 255 255 255 255 53 47 28 13 1 0 42 31 73 0 16 255 255 255 255 255 255 238 80 0 0 0 0 0 82 76 84 68 1 0 0 0 2 0 0 0 2 0 0 0 0 0 0 0 104 102 70 65 207 204 76 62 104 102 70 65 207 204 252 65 207 204 76 62 207 204 252 65 11 0 11 0 64 64 0 35 0 35 30 19 189 0 0 0 82 76 84 68 1 0 0 0 2 0 0 0 2 0 0 0 0 0 0 0 104 102 70 65 207 204 76 62 104 102 70 65 207 204 252 65 207 204 76 62 207 204 252 65 11 0 11 0 64 64 0 35 0 35 30 19 31 0 1 0 16 31 255 1 0 8 15 63 0 16 31 0 63 0 8 15 64 0 255 255 255 255 255 255 255 255 118 15 2 0 255 255 255 255 255 255 243 31 63 1 0 16 15 164 15 9 15 63 0 16 15 64 0 255 255 255 255 255 255 255 255 146 15 2 0 255 255 255 255 255 255 243 47 150 135 1 0 14 31 131 36 7 9 47 30 15 1 0 14 31 11 64 0 255 255 255 255 255 255 255 255 81 47 28 13 1 0 14 31 9 128 8 9 15 2 0 255 255 255 255 255 255 238 80 0 0 0 0 0" />
+		<attribute name="Partition Type" value="monotone" />
+		<attribute name="Draw OffMeshConnections" value="true" />
+		<attribute name="Draw NavAreas" value="true" />
+		<attribute name="Draw Obstacles" value="true" />
+	</component>
+	<node id="2">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="floor" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="0 -0.5 0" />
+		<attribute name="Rotation" value="1 0 0 0" />
+		<attribute name="Scale" value="50 1 50" />
+		<attribute name="Variables" />
+		<component type="StaticModel" id="3">
+			<attribute name="Model" value="Model;Models/Box.mdl" />
+			<attribute name="Material" value="Material;Materials/Floor_Tile2.xml" />
+		</component>
+		<component type="CollisionShape" id="20" />
+		<component type="RigidBody" id="22">
+			<attribute name="Physics Rotation" value="1 0 0 0" />
+			<attribute name="Physics Position" value="0 -0.5 0" />
+		</component>
+		<component type="Navigable" id="105" />
+	</node>
+	<node id="11">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="zone" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="0 0 0" />
+		<attribute name="Rotation" value="1 0 0 0" />
+		<attribute name="Scale" value="1 1 1" />
+		<attribute name="Variables" />
+		<component type="Zone" id="17">
+			<attribute name="Bounding Box Min" value="-200 -200 -200" />
+			<attribute name="Bounding Box Max" value="200 200 200" />
+			<attribute name="Ambient Color" value="0.2 0.3 0.4 1" />
+			<attribute name="Fog Color" value="0.2 0.3 0.4 1" />
+			<attribute name="Fog Start" value="30" />
+			<attribute name="Fog End" value="100" />
+			<attribute name="Fog Height" value="0.75" />
+			<attribute name="Ambient Gradient" value="true" />
+		</component>
+	</node>
+	<node id="22">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="thug2" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="2.40837 2.5 6.67463" />
+		<attribute name="Rotation" value="-0.0669684 0 0.997755 0" />
+		<attribute name="Scale" value="2.5 5 2.5" />
+		<attribute name="Variables" />
+		<component type="StaticModel" id="55">
+			<attribute name="Model" value="Model;Models/Box.mdl" />
+			<attribute name="Material" value="Material;Materials/Green.xml" />
+		</component>
+	</node>
+	<node id="23">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="light" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="0.046381 10.5493 -7.00631" />
+		<attribute name="Rotation" value="0.707107 0.707107 0 0" />
+		<attribute name="Scale" value="1 1 1" />
+		<attribute name="Variables" />
+		<component type="Light" id="49">
+			<attribute name="Light Type" value="Spot" />
+			<attribute name="Color" value="1 0.75 0.25 1" />
+			<attribute name="Range" value="60" />
+			<attribute name="Spot FOV" value="90" />
+			<attribute name="Cast Shadows" value="true" />
+			<attribute name="CSM Splits" value="1000.11 0 0 0" />
+		</component>
+	</node>
+	<node id="24">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="thug3" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="8.35917 2.5 5.96874" />
+		<attribute name="Rotation" value="0.441599 0 -0.897213 0" />
+		<attribute name="Scale" value="2.5 5 2.5" />
+		<attribute name="Variables" />
+		<component type="StaticModel" id="65">
+			<attribute name="Model" value="Model;Models/Box.mdl" />
+			<attribute name="Material" value="Material;Materials/Green.xml" />
+		</component>
+	</node>
+	<node id="26">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="thug4" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="-3.72608 2.5 6.34706" />
+		<attribute name="Rotation" value="0.0912463 0 0.995828 0" />
+		<attribute name="Scale" value="2.5 5 2.5" />
+		<attribute name="Variables" />
+		<component type="StaticModel" id="66">
+			<attribute name="Model" value="Model;Models/Box.mdl" />
+			<attribute name="Material" value="Material;Materials/Green.xml" />
+		</component>
+	</node>
+	<node id="27">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="thug5" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="-4.83721 2.5 11.634" />
+		<attribute name="Rotation" value="0.0294626 0 0.999566 0" />
+		<attribute name="Scale" value="2.5 5 2.5" />
+		<attribute name="Variables" />
+		<component type="StaticModel" id="67">
+			<attribute name="Model" value="Model;Models/Box.mdl" />
+			<attribute name="Material" value="Material;Materials/Green.xml" />
+		</component>
+	</node>
+	<node id="29">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="thug12" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="-11.3012 2.5 3.28371" />
+		<attribute name="Rotation" value="-0.481764 0 -0.8763 0" />
+		<attribute name="Scale" value="2.5 5 2.5" />
+		<attribute name="Variables" />
+		<component type="StaticModel" id="68">
+			<attribute name="Model" value="Model;Models/Cylinder.mdl" />
+			<attribute name="Material" value="Material;Materials/Green.xml" />
+		</component>
+	</node>
+	<node id="30">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="thug31" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="11.8712 2.5 2.32606" />
+		<attribute name="Rotation" value="0.402328 0 -0.915495 0" />
+		<attribute name="Scale" value="2.5 5 2.5" />
+		<attribute name="Variables" />
+		<component type="StaticModel" id="69">
+			<attribute name="Model" value="Model;Models/Box.mdl" />
+			<attribute name="Material" value="Material;Materials/Green.xml" />
+		</component>
+	</node>
+	<node id="31">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="thug51" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="2.77619 2.5 12.7066" />
+		<attribute name="Rotation" value="0.0294626 0 0.999566 0" />
+		<attribute name="Scale" value="2.5 5 2.5" />
+		<attribute name="Variables" />
+		<component type="StaticModel" id="70">
+			<attribute name="Model" value="Model;Models/Box.mdl" />
+			<attribute name="Material" value="Material;Materials/Green.xml" />
+		</component>
+	</node>
+	<node id="32">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="thug52" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="15.2549 2.5 -1.82609" />
+		<attribute name="Rotation" value="0.0294626 0 0.999566 0" />
+		<attribute name="Scale" value="2.5 5 2.5" />
+		<attribute name="Variables" />
+		<component type="StaticModel" id="71">
+			<attribute name="Model" value="Model;Models/Box.mdl" />
+			<attribute name="Material" value="Material;Materials/Green.xml" />
+		</component>
+	</node>
+	<node id="33">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="thug53" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="-14.3005 2.5 -0.870215" />
+		<attribute name="Rotation" value="0.0294626 0 0.999566 0" />
+		<attribute name="Scale" value="2.5 5 2.5" />
+		<attribute name="Variables" />
+		<component type="StaticModel" id="72">
+			<attribute name="Model" value="Model;Models/Cylinder.mdl" />
+			<attribute name="Material" value="Material;Materials/Green.xml" />
+		</component>
+	</node>
+	<node id="39">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="thug2" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="-7.84452 2.5 5.57151" />
+		<attribute name="Rotation" value="0.328809 0 0.944396 0" />
+		<attribute name="Scale" value="2.5 5 2.5" />
+		<attribute name="Variables" />
+		<component type="StaticModel" id="56">
+			<attribute name="Model" value="Model;Models/Box.mdl" />
+			<attribute name="Material" value="Material;Materials/Green.xml" />
+		</component>
+	</node>
+	<node id="44">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="player" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="0 2.5 -11.6259" />
+		<attribute name="Rotation" value="1 0 0 0" />
+		<attribute name="Scale" value="1 5 1" />
+		<attribute name="Variables" />
+		<component type="StaticModel" id="63">
+			<attribute name="Model" value="Model;Models/Box.mdl" />
+			<attribute name="Material" value="Material;Materials/Blue.xml" />
+		</component>
+	</node>
+	<node id="59">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="wall" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="0 2.5 25" />
+		<attribute name="Rotation" value="1 0 0 0" />
+		<attribute name="Scale" value="50 5 0.1" />
+		<attribute name="Variables" />
+		<component type="StaticModel" id="108">
+			<attribute name="Model" value="Model;Models/Box.mdl" />
+			<attribute name="Material" value="Material;Materials/Wall.xml" />
+		</component>
+		<component type="CollisionShape" id="112" />
+		<component type="RigidBody" id="113">
+			<attribute name="Physics Rotation" value="1 0 0 0" />
+			<attribute name="Physics Position" value="0 2.5 25" />
+		</component>
+	</node>
+	<node id="60">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="wall" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="25 2.5 0" />
+		<attribute name="Rotation" value="0.707107 0 0.707107 0" />
+		<attribute name="Scale" value="50 5 0.1" />
+		<attribute name="Variables" />
+		<component type="StaticModel" id="109">
+			<attribute name="Model" value="Model;Models/Box.mdl" />
+			<attribute name="Material" value="Material;Materials/Wall.xml" />
+		</component>
+		<component type="CollisionShape" id="114" />
+		<component type="RigidBody" id="115">
+			<attribute name="Physics Rotation" value="0.707107 0 0.707107 0" />
+			<attribute name="Physics Position" value="25 2.5 0" />
+		</component>
+	</node>
+	<node id="61">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="wall" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="0 2.5 -25" />
+		<attribute name="Rotation" value="1 0 0 0" />
+		<attribute name="Scale" value="50 5 0.1" />
+		<attribute name="Variables" />
+		<component type="StaticModel" id="110">
+			<attribute name="Model" value="Model;Models/Box.mdl" />
+			<attribute name="Material" value="Material;Materials/Wall.xml" />
+		</component>
+		<component type="CollisionShape" id="116" />
+		<component type="RigidBody" id="117">
+			<attribute name="Physics Rotation" value="1 0 0 0" />
+			<attribute name="Physics Position" value="0 2.5 -25" />
+		</component>
+	</node>
+	<node id="62">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="wall" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="-25 2.5 0" />
+		<attribute name="Rotation" value="0.707107 0 0.707107 0" />
+		<attribute name="Scale" value="50 5 0.1" />
+		<attribute name="Variables" />
+		<component type="StaticModel" id="111">
+			<attribute name="Model" value="Model;Models/Box.mdl" />
+			<attribute name="Material" value="Material;Materials/Wall.xml" />
+		</component>
+		<component type="CollisionShape" id="118" />
+		<component type="RigidBody" id="119">
+			<attribute name="Physics Rotation" value="0.707107 0 0.707107 0" />
+			<attribute name="Physics Position" value="-25 2.5 0" />
+		</component>
+	</node>
+</scene>

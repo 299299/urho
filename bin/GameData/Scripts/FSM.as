@@ -13,12 +13,12 @@ class State
 
     State()
     {
-        //Print("State()");
+        //LogPrint("State()");
     }
 
     ~State()
     {
-        //Print("~State() " + String(name));
+        //LogPrint("~State() " + String(name));
     }
 
     void Enter(State@ lastState)
@@ -48,7 +48,7 @@ class State
 
     String GetDebugText()
     {
-        return " name=" + name + " timeInState=" + String(timeInState) + "\n";
+        return " name=" + name + " timeInState=" + String(timeInState);
     }
 
     void SetName(const String&in s)
@@ -68,21 +68,15 @@ class FSM
 {
     Array<State@>           states;
     State@                  currentState;
-    StringHash              queueState;
+    String                  queueState;
 
     FSM()
     {
-        //Print("FSM()");
     }
 
     ~FSM()
     {
-        /*
-        if (currentState !is null)
-            Print("~FSM() currentState=" + currentState.name);
-        else
-            Print("~FSM()");
-        */
+        //LogPrint("~FSM() ");
         @currentState = null;
         states.Clear();
     }
@@ -107,18 +101,18 @@ class FSM
         return null;
     }
 
-    bool ChangeState(const StringHash&in nameHash)
+    bool ChangeState(const String&in name)
     {
-        State@ newState = FindState(nameHash);
+        State@ newState = FindState(StringHash(name));
 
         if (newState is null)
         {
-            Print("new-state not found " + nameHash.ToString());
+            LogPrint("new-state not found " + name);
             return false;
         }
 
         if (currentState is newState) {
-            // Print("same state !!!");
+            // LogPrint("same state !!!");
             if (!currentState.CanReEntered())
                 return false;
             currentState.Exit(newState);
@@ -143,17 +137,12 @@ class FSM
             newStateName = newState.name;
 
         if (d_log)
-            Print("FSM Change State " + oldStateName + " -> " + newStateName);
+            LogPrint("FSM Change State " + oldStateName + " -> " + newStateName);
 
         return true;
     }
 
-    bool ChangeState(const String&in name)
-    {
-        return ChangeState(StringHash(name));
-    }
-
-    void ChangeStateQueue(const StringHash&in name)
+    void ChangeStateQueue(const String&in name)
     {
         queueState = name;
     }
@@ -163,10 +152,10 @@ class FSM
         if (currentState !is null)
             currentState.Update(dt);
 
-        if (queueState != 0)
+        if (!queueState.empty)
         {
             ChangeState(queueState);
-            queueState = 0;
+            queueState.Clear();
         }
     }
 
@@ -186,9 +175,14 @@ class FSM
     {
         String ret = "current-state: ";
         if (currentState !is null)
-            ret += currentState.GetDebugText();
+            ret += currentState.GetDebugText() + "\n";
         else
             ret += "null\n";
         return ret;
+    }
+
+    String GetCurrentStateName()
+    {
+        return (currentState is null) ? "null" : currentState.name;
     }
 };
