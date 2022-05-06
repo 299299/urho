@@ -60,8 +60,6 @@ void Start()
             argument = argument.Substring(1);
             if (argument == "bgm")
                 nobgm = !nobgm;
-            else if (argument == "bighead")
-                big_head_mode = !big_head_mode;
             else if (argument == "lowend")
                 render_features = RF_NONE;
             else if (debug_mode == "debug_mode")

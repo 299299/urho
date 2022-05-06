@@ -78,17 +78,6 @@ class MotionRig
     {
         rig = rigName;
         Model@ m = cache.GetResource("Model",  rigName);
-        if (big_head_mode)
-        {
-            Vector3 v(BIG_HEAD_SCALE, BIG_HEAD_SCALE, BIG_HEAD_SCALE);
-            Skeleton@ s = m.skeleton;
-            s.GetBone(HEAD).initialScale = v;
-            s.GetBone(L_HAND).initialScale = v;
-            s.GetBone(R_HAND).initialScale = v;
-            s.GetBone(L_FOOT).initialScale = v;
-            s.GetBone(R_FOOT).initialScale = v;
-        }
-
         Bone@ scaleBone = m.skeleton.GetBone(ScaleBoneName);
         Vector3 originScale = scaleBone.initialScale;
         if (scaleBone.initialScale.x > 1.0f)

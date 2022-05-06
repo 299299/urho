@@ -924,11 +924,6 @@ class Character : GameObject
             cache.AddManualResource(ragdollPoseAnim);
         }
 
-        if (big_head_mode)
-        {
-            renderNode.position = Vector3(0, 0.3f, 0);
-        }
-
         if (one_shot_kill)
             attackDamage = 9999;
 

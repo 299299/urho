@@ -229,7 +229,6 @@ enum AttackType
 
 const String TAG_LOADING = "TAG_LOADING";
 
-bool big_head_mode = false;
 bool nobgm = true;
 bool nosound = true;
 
@@ -239,7 +238,7 @@ float BGM_BASE_FREQ = 44100;
 uint camera_id = M_MAX_UNSIGNED;
 uint player_id = M_MAX_UNSIGNED;
 
-int test_enemy_num_override = 20;
+int test_enemy_num_override = 0;
 int render_features = RF_SHADOWS | RF_HDR;
 
 Array<int> g_dir_cache;
@@ -269,6 +268,9 @@ bool camera_shake = true;
 // 7 --> debug ui parameter tweak
 // 8 --> debug animation
 int debug_mode = 2;
+
+const String preload_scene_name = "Scenes/animation.xml";
+const String game_scene_name = "Scenes/1.xml";
 
 // ==============================================
 //
