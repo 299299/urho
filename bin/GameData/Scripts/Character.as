@@ -1129,10 +1129,16 @@ class Character : GameObject
     void DebugDraw(DebugRenderer@ debug)
     {
         stateMachine.DebugDraw(debug);
-        debug.AddNode(sceneNode, 1.0f, false);
+        // debug.AddNode(sceneNode, 1.0f, false);
         // debug.AddCircle(sceneNode.worldPosition, Vector3(0, 1, 0), COLLISION_RADIUS, Color(0.25f, 0.35f, 0.75f), 32, false);
         if (mover !is null)
             mover.DebugDraw(debug);
+
+
+        float t_angle = GetTargetAngle();
+        float cur_angle = GetCharacterAngle();
+        DebugDrawDirection(debug, sceneNode.worldPosition, t_angle, RED, 3.0);
+        DebugDrawDirection(debug, sceneNode.worldPosition, cur_angle, BLUE, 3.0);
     }
 
     void TestAnimation(const Array<String>&in animations)

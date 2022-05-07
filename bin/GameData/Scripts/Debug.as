@@ -80,11 +80,13 @@ void DrawDebug(float dt)
         }
     }
 
-    // DrawDebugText();
-
     DebugRenderer@ debug = scene_.debugRenderer;
     if (debug_draw_flag == 0)
+    {
         return;
+    }
+
+    DrawDebugText();
 
     gDebugMgr.Update(debug, dt);
 
@@ -116,7 +118,7 @@ void DrawDebug(float dt)
 
     if (debug_draw_flag > 2)
     {
-        // gCameraMgr.DebugDraw(debug);
+        gCameraMgr.DebugDraw(debug);
 
         DynamicNavigationMesh@ dnm = scene_.GetComponent("DynamicNavigationMesh");
         if (dnm !is null)
@@ -148,8 +150,13 @@ void HandleKeyDown(StringHash eventType, VariantMap& eventData)
     else if (key == KEY_1)
     {
         ++debug_draw_flag;
-        if (debug_draw_flag > 3)
-            debug_draw_flag = 0;
+        debug_draw_flag = debug_draw_flag % 4;
+
+        Text@ text = ui.root.GetChild("debug", true);
+        if (text !is null)
+        {
+            text.visible = debug_draw_flag != 0;
+        }
     }
     else if (key == KEY_2)
         debugHud.ToggleAll();
@@ -273,7 +280,8 @@ void HandleKeyDown(StringHash eventType, VariantMap& eventData)
         //String testName = GetAnimationName("BM_Railing/Railing_Idle");
         //String testName = ("BM_Railing/Railing_Climb_Down_Forward");
         //String testName = "BM_Climb/Stand_Climb_Up_256_Hang";
-        String testName = "Test/Attack_Close_Back_01"; //"BM_Climb/Walk_Climb_Down_128"; //"BM_Climb/Stand_Climb_Up_256_Hang";
+        //"Test/Attack_Close_Back_01"; //"BM_Climb/Walk_Climb_Down_128"; //"BM_Climb/Stand_Climb_Up_256_Hang";
+        String testName = lastPlayerMotion;
         Player@ player = GetPlayer();
         testAnimations.Push(testName);
         //testAnimations.Push("BM_Climb/Dangle_Right");
@@ -300,6 +308,13 @@ void HandleKeyDown(StringHash eventType, VariantMap& eventData)
     else if (key == KEY_C)
     {
         TestCounter(6);
+    }
+    else if (key == KEY_V) {
+        float cur_time_scale = scene_.timeScale;
+        float target_time_scale = 0.1;
+        if (cur_time_scale < 0.5)
+            target_time_scale = 1.0;
+        Global_SetSceneTimeScale(target_time_scale);
     }
 }
 
@@ -698,12 +713,6 @@ void DrawDebugText()
     if (text is null)
         return;
 
-    if (debug_draw_flag == 0)
-    {
-        text.visible = false;
-        return;
-    }
-
     text.visible = true;
     String seperator = "-------------------------------------------------------------------------------------------------------\n";
     String debugText = seperator;
@@ -1058,15 +1067,17 @@ void CreateDebugUI()
     debugText.color = RED;
     debugText.priority = -99999;
     debugText.visible = false;
+    debugText.textEffect = TE_SHADOW;
 
     // create instruction text
     // Set starting position of the cursor at the rendering window center
     //cursor.SetPosition(graphics.width / 2, graphics.height / 2);
     Text@ instructionText = ui.root.CreateChild("Text", "instruction");
     instructionText.SetFont(cache.GetResource("Font", DEBUG_FONT), DEBUG_FONT_SIZE);
-    instructionText.color = RED;
+    instructionText.color = BLUE;
     instructionText.priority = -99999;
     instructionText.visible = false;
+    instructionText.textEffect = TE_SHADOW;
     instructionText.text = " ------------- DEBUG KEY INSTRUCTIONS ------------- \n"
                            "` -> switch debug mode \n"
                            "1 -> switch debug draw flag \n"
@@ -1081,12 +1092,15 @@ void CreateDebugUI()
                            "0 -> dump debug text\n"
                            "+ -> debug animation increase frame \n"
                            "- -> debug animation decrease frame \n"
+                           "E -> show/hide debug instruction \n"
+                           "R -> pause current scene \n"
                            "F -> test attack animation \n"
                            "G -> test single animation \n"
                            "H -> test single counter animation \n"
                            "J -> test double counter animation \n"
                            "K -> test triple counter animation \n"
                            "L -> test env counter animation \n"
+                           "V -> slow down / resume scene speed \n"
                            "; -> test specific single counter animation \n"
                            "'' -> test beat animation \n"
                            "Q -> random enemy positions \n"
@@ -1094,7 +1108,7 @@ void CreateDebugUI()
                            "C -> test counter logic \n"
                            "U -> test player time scale \n"
                            "Y -> freeze/unfreeze camera control \n";
-    instructionText.horizontalAlignment = HA_CENTER;
+    instructionText.horizontalAlignment = HA_RIGHT;
     instructionText.verticalAlignment = VA_CENTER;
 
     // create debug parameter ui
@@ -1188,8 +1202,7 @@ void HandleSliderChanged(StringHash eventType, VariantMap& eventData)
             EnemyManager@ em = GetEnemyMgr();
             for (uint i=0; i<em.enemyList.length; ++i)
             {
-                Enemy@ e = em.enemyList[i];
-                SetTestAnimationTime(e, t);
+                SetTestAnimationTime(em.enemyList[i], t);
             }
         }
     }
@@ -1228,6 +1241,13 @@ void OnDebugModeChanged()
     ShowHideUIWithTag(TAG_DEBUG, (debug_mode == 7));
     ShowHideUIWithTag(TAG_DEBUG_ANIM, (debug_mode == 8));
     ShowHideUIWithTag(TAG_INPUT, (debug_mode != 8));
+
+
+    Text@ text = ui.root.GetChild("debug", true);
+    if (text !is null)
+    {
+        text.visible = debug_draw_flag != 0;
+    }
 }
 
 void UpdateTimeSlider()
@@ -1269,4 +1289,15 @@ void DebugTimeScale(float timeScale)
 {
     LogPrint("DebugTimeScale =" + timeScale);
     script.defaultScene.timeScale = timeScale;
+}
+
+void LogPrint(const String&in msg)
+{
+    log.Info(msg);
+}
+
+void LogHint(const String&in msg, float t = 2.0f)
+{
+    LogPrint(msg);
+    gDebugMgr.AddHintText(msg, t);
 }

@@ -728,3 +728,17 @@ class GameFSM : FSM
             gameState.OnSceneTimeScaleUpdated(scene, newScale);
     }
 };
+
+
+
+void Global_SetSceneTimeScale(float scale)
+{
+    Scene@ _scene = script.defaultScene;
+    if (_scene is null)
+        return;
+    if (_scene.timeScale == scale)
+        return;
+    _scene.timeScale = scale;
+    gGame.OnSceneTimeScaleUpdated(_scene, scale);
+    LogPrint("Global SetSceneTimeScale:" + scale);
+}

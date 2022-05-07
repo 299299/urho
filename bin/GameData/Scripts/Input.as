@@ -43,6 +43,12 @@ class GameInput
         m_leftStickX = Lerp(m_leftStickX, leftStick.x, m_smooth);
         m_leftStickY = Lerp(m_leftStickY, leftStick.y, m_smooth);
 
+        if (Abs(m_leftStickX) < moveXAxisDeadZone)
+            m_leftStickX = 0.0;
+
+        if (Abs(m_leftStickY) < moveYAxisDeadZone)
+            m_leftStickY = 0.0;
+
         m_leftStickMagnitude = m_leftStickX * m_leftStickX + m_leftStickY * m_leftStickY;
         m_leftStickAngle = Atan2(m_leftStickX, m_leftStickY);
 
@@ -187,7 +193,7 @@ class GameInput
     // Returns true if the left game pad hasn't moved since the last update
     bool IsLeftStickStationary()
     {
-        return HasLeftStickBeenStationary(0.01f);
+        return HasLeftStickBeenStationary(0.1f);
     }
 
     // Returns true if the left stick is the dead zone, false otherwise

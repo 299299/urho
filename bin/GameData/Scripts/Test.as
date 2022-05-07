@@ -40,6 +40,8 @@ void Start()
     }
     nosound = !mobile;
 
+    engine.maxFps = 60.0;
+
     if (mobile)
         debug_mode = 0;
 
@@ -363,17 +365,6 @@ void PostSceneLoad()
     Util Functions
 
 ************************************************/
-void LogPrint(const String&in msg)
-{
-    log.Info(msg);
-}
-
-void LogHint(const String&in msg, float t = 2.0f)
-{
-    LogPrint(msg);
-    gDebugMgr.AddHintText(msg, t);
-}
-
 uint Global_AddFlag(uint flags, uint flag)
 {
     flags |= flag;

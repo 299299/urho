@@ -195,8 +195,6 @@ class Player : Character
 
     Enemy@ CommonPickEnemy(float maxDiffAngle, float maxDiffDist, int flags, bool checkBlock)
     {
-        LogPrint("\n CommonPickEnemy Start !!!!!!!!!!!! ");
-
         uint t = time.systemTime;
         Scene@ _scene = GetScene();
         EnemyManager@ em = GetEnemyMgr();
@@ -315,9 +313,9 @@ class Player : Character
 
     String GetDebugText()
     {
-        return Character::GetDebugText() +  " flags=" + flags + " combo=" + combo +  "killed=" + killed + " timeScale=" + timeScale +
+        return Character::GetDebugText() +  " flags=" + flags + " combo=" + combo +  " killed=" + killed + " timeScale=" + timeScale +
               "\n tAngle=" + GetTargetAngle() +" grounded=" + mover.grounded + " inAirHeight=" + mover.inAirHeight +
-              "scale=" + renderNode.GetChild(ScaleBoneName, true).scale.ToString() + "\n";
+              " scale=" + renderNode.GetChild(ScaleBoneName, true).scale.ToString() + "\n";
     }
 
     void Reset()
@@ -422,5 +420,10 @@ class Player : Character
         debug.AddCircle(sceneNode.worldPosition, Vector3(0, 1, 0), AI_NEAR_DIST, RED, 32, false);
         debug.AddCircle(sceneNode.worldPosition, Vector3(0, 1, 0), MAX_ATTACK_DIST, BLUE, 32, false);
         debug.AddSkeleton(animModel.skeleton, WHITE, false);*/
+
+        // Print ("player c-angle=" + GetCharacterAngle());
+        // Print ("player t-angel=" + GetTargetAngle());
+        // Print ("player left-axis-angel=" + gInput.GetLeftAxisAngle());
+        // Print ("player camera-angel=" + gCameraMgr.GetCameraAngle());
     }
 };

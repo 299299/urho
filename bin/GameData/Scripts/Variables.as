@@ -196,6 +196,8 @@ const String TAG_INPUT = "tag_input";
 const String TOUCH_BTN_NAME = "touch_move";
 const String TOUCH_ICON_NAME = "touch_move_icon";
 
+const float moveXAxisDeadZone = 0.01;
+const float moveYAxisDeadZone = 0.01;
 
 // ==============================================
 //
@@ -214,7 +216,7 @@ enum RenderFeature
 const String CAMERA_NAME = "Camera";
 const String UI_FONT = "Fonts/angrybirds-regular.ttf";
 const int UI_FONT_SIZE = 40;
-const String DEBUG_FONT = "Fonts/Anonymous Pro.ttf";
+const String DEBUG_FONT = "Fonts/UbuntuMono-Regular.ttf";
 const int DEBUG_FONT_SIZE = 20;
 const String GAME_CAMEAR_NAME = "ThirdPerson";
 
@@ -249,7 +251,7 @@ bool mobile = false;
 bool one_shot_kill = false;
 bool instant_collision = true;
 bool player_walk = true;
-bool locomotion_turn = true;
+bool enable_locomotion_turn = true;
 bool attack_choose_closest_one = false;
 bool counter_choose_closest_one = false;
 
@@ -274,6 +276,8 @@ const String game_scene_name = "Scenes/1.xml";
 
 const String playerClassName = "Bruce"; // DeathStroke
 const String playerObjectName = "elm";
+
+String lastPlayerMotion = "";
 
 // ==============================================
 //

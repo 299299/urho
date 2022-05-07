@@ -329,7 +329,8 @@ class PlayerAttackState : CharacterState
             // lost combo
             p.combo = 0;
             p.StatusChanged();
-            LogPrint("PlayerAttack no target pick attack " + currentAttack.name);
+            LogHint("PlayerAttack no target pick attack " + currentAttack.name);
+            LogHint("PlayerAttack RadialSelectAnimation index=" + index);
         }
 
         currentAttack.Start(ownner);
@@ -398,6 +399,8 @@ class PlayerAttackState : CharacterState
         CharacterState::Enter(lastState);
         lastDockBonePosition =  ownner.GetNode().GetChild(currentAttack.dockAlignBoneName, true).worldPosition;
         lastFrameDockBonePosition = lastDockBonePosition;
+
+        lastPlayerMotion = currentAttack.name;
     }
 
     void Exit(State@ nextState)
