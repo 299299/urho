@@ -199,6 +199,12 @@ void CreateBruceCombatMotions()
 {
     BM_Game_MotionManager@ mgr = cast<BM_Game_MotionManager>(gMotionMgr);
 
+    if (mgr.bruce_forward_attack_motions.length > 0)
+    {
+        Print("CreateBruceCombatMotions already created");
+        return;
+    }
+
     String preFix = "BM_HitReaction/";
     Global_CreateMotion(preFix + "HitReaction_Back"); // back attacked
     Global_CreateMotion(preFix + "HitReaction_Face_Right"); // front punched

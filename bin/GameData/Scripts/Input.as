@@ -214,7 +214,7 @@ class GameInput
                     if (e.name == actionNames[action])
                     {
                         ret = true;
-                        break;
+                        return ret;
                     }
                     else if (e.name == TOUCH_BTN_NAME)
                     {
@@ -223,6 +223,7 @@ class GameInput
                 }
             }
         }
+
 
         if (!mobile && !moving)
         {

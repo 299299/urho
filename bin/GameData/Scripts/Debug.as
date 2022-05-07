@@ -1124,7 +1124,7 @@ void CreateDebugUI()
     x = gw / 2 - w / 2;
     y = gh - 3 * h;
     Slider@ s = CreateSlider(x, y, w, h, "Time_Slider", TAG_DEBUG_ANIM);
-    s.visible = true;
+    s.visible = false;
 }
 
 void SetTestAnimationTime(Character@ c, float t)
