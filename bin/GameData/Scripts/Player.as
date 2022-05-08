@@ -300,11 +300,11 @@ class Player : Character
 
         if (debug_draw_flag > 0)
         {
-            gDebugMgr.AddDirection(myPos, targetAngle - maxDiffAngle/2.0f, maxDiffDist, YELLOW);
-            gDebugMgr.AddDirection(myPos, targetAngle + maxDiffAngle/2.0f, maxDiffDist, YELLOW);
-            if (attackEnemy !is null)
-                gDebugMgr.AddLine(myPos, attackEnemy.GetNode().worldPosition, RED);
-            gDebugMgr.AddDirection(myPos, targetAngle, maxDiffDist, BLUE);
+            // gDebugMgr.AddDirection(myPos, targetAngle - maxDiffAngle/2.0f, maxDiffDist, YELLOW);
+            // gDebugMgr.AddDirection(myPos, targetAngle + maxDiffAngle/2.0f, maxDiffDist, YELLOW);
+            // if (attackEnemy !is null)
+            //     gDebugMgr.AddLine(myPos, attackEnemy.GetNode().worldPosition, RED);
+            // gDebugMgr.AddDirection(myPos, targetAngle, maxDiffDist, BLUE);
         }
 
         LogPrint("CommonPicKEnemy() time-cost = " + (time.systemTime - t) + " ms \n");
@@ -355,7 +355,8 @@ class Player : Character
         if (debug_mode == 1 || debug_mode == 3)
         {
             EnemyManager@ em = GetEnemyMgr();
-            @e = em.enemyList[RandomInt(em.enemyList.length)];
+            if (em.enemyList.length > 0)
+                @e = em.enemyList[RandomInt(em.enemyList.length)];
         }
         else
         {

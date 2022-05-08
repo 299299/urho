@@ -356,8 +356,8 @@ void FixAnimationOrigin(MotionRig@ rig, const String&in animationFile, int motio
 void ProcessAnimation(MotionRig@ rig, const String&in animationFile, int motionFlag, int allowMotion, Array<Vector4>&out outKeys, Vector4&out startFromOrigin)
 {
     bool dump = motionFlag & kMotion_Ext_Debug_Dump != 0;
-    if (d_log)
-        dump = true;
+    // if (d_log)
+    //     dump = true;
 
     if (dump)
     {

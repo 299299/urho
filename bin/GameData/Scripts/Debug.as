@@ -132,6 +132,11 @@ void DrawDebug(float dt)
         if (pw !is null)
             pw.DrawDebugGeometry(true);
     }
+
+    // for (float a = 15.0; a < 360.0; a += 15.0)
+    // {
+    //     DebugDrawDirection(debug, Vector3::ZERO, a, RED, 3.5);
+    // }
 }
 
 void HandleKeyDown(StringHash eventType, VariantMap& eventData)
@@ -309,12 +314,13 @@ void HandleKeyDown(StringHash eventType, VariantMap& eventData)
     {
         TestCounter(6);
     }
-    else if (key == KEY_V) {
-        float cur_time_scale = scene_.timeScale;
-        float target_time_scale = 0.1;
-        if (cur_time_scale < 0.5)
-            target_time_scale = 1.0;
-        Global_SetSceneTimeScale(target_time_scale);
+    else if (key == KEY_SPACE)
+    {
+        if (debug_mode > 0)
+        {
+            DebugPause(false);
+            DebugTimeScale(1.0f);
+        }
     }
 }
 
@@ -332,14 +338,14 @@ void HandleMouseButtonDown(StringHash eventType, VariantMap& eventData)
         SubscribeToEvent("MouseMove", "HandleMouseMove");
         SubscribeToEvent("MouseButtonUp", "HandleMouseButtonUp");
     }
-    else if(button == MOUSEB_LEFT)
-    {
-        if (debug_mode > 0)
-        {
-            DebugPause(false);
-            DebugTimeScale(1.0f);
-        }
-    }
+    // else if(button == MOUSEB_LEFT)
+    // {
+    //     if (debug_mode > 0)
+    //     {
+    //         DebugPause(false);
+    //         DebugTimeScale(1.0f);
+    //     }
+    // }
 }
 
 void HandleMouseButtonUp(StringHash eventType, VariantMap& eventData)
@@ -685,11 +691,27 @@ void RandomEnemyPositions()
    ##### DEBUG DRAW STUFF
 
 ***********************************************/
+void GetArrowPoints(const Vector3&in start, float angle, float radius, Vector3&out pt1, Vector3&out pt2)
+{
+    angle = 180 + angle; // flip angle
+    const float arrow_angle = 45.0;
+    float pt1_angle = angle - arrow_angle;
+    float pt2_angle = angle + arrow_angle;
+    pt1 = start + Vector3(Sin(pt1_angle) * radius, 0, Cos(pt1_angle) * radius);
+    pt2 = start + Vector3(Sin(pt2_angle) * radius, 0, Cos(pt2_angle) * radius);
+}
+
+
 void DebugDrawDirection(DebugRenderer@ debug, const Vector3& start, float angle, const Color&in color, float radius = 1.0)
 {
     Vector3 end = start + Vector3(Sin(angle) * radius, 0, Cos(angle) * radius);
     debug.AddLine(start, end, color, false);
-    debug.AddCross(end, 0.5f, color, false);
+    // debug.AddCross(end, 0.5f, color, false);
+
+    Vector3 pt1, pt2;
+    GetArrowPoints(end, angle, 0.5, pt1, pt2);
+    debug.AddLine(end, pt1, color, false);
+    debug.AddLine(end, pt2, color, false);
 }
 
 void DebugDrawDirection(DebugRenderer@ debug, const Vector3& start, const Vector3&in dir, const Color&in color, float radius = 1.0)
@@ -1100,14 +1122,14 @@ void CreateDebugUI()
                            "J -> test double counter animation \n"
                            "K -> test triple counter animation \n"
                            "L -> test env counter animation \n"
-                           "V -> slow down / resume scene speed \n"
+                           "T -> slow down / resume scene speed \n"
                            "; -> test specific single counter animation \n"
                            "'' -> test beat animation \n"
                            "Q -> random enemy positions \n"
                            "O -> test thug hit animation \n";
                            "C -> test counter logic \n"
                            "U -> test player time scale \n"
-                           "Y -> freeze/unfreeze camera control \n";
+                           "space -> scene and time scale resume \n";
     instructionText.horizontalAlignment = HA_RIGHT;
     instructionText.verticalAlignment = VA_CENTER;
 

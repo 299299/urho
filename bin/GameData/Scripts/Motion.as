@@ -144,6 +144,7 @@ class Motion
     Vector4                 startFromOrigin;
 
     float                   endDistance;
+    float                   endRotation;
 
     int                     endFrame;
     int                     motionFlag;
@@ -173,6 +174,7 @@ class Motion
         looped = other.looped;
         startFromOrigin = other.startFromOrigin;
         endDistance = other.endDistance;
+        endRotation = other.endRotation;
         endFrame = other.endFrame;
         motionFlag = other.motionFlag;
         allowMotion = other.allowMotion;
@@ -224,6 +226,7 @@ class Motion
             Vector4 v = motionKeys[0];
             Vector4 diff = motionKeys[endFrame - 1] - motionKeys[0];
             endDistance = Vector3(diff.x, diff.y, diff.z).length;
+            endRotation = diff.w;
         }
 
         maxHeight = -9999;
@@ -235,8 +238,9 @@ class Motion
 
         processed = true;
 
-        if (d_log)
+        // if (d_log)
         LogPrint("Motion " + name + " endDistance="  + endDistance +
+                 " endRotation=" + AngleDiff(endRotation) +
                  " startFromOrigin=" + startFromOrigin.ToString()  +
                  " maxHeight=" + maxHeight +
                  " timeCost=" + String(time.systemTime - startTime) + " ms");
@@ -463,19 +467,28 @@ class Motion
     void DebugDraw(DebugRenderer@ debug, Character@ object)
     {
         Node@ _node = object.GetNode();
-        /*
+        Color debug_draw_color = Color(0.5f, 0.5f, 0.7f);
+
         if (looped) {
             Vector4 tFinnal = GetKey(endTime);
             Vector3 tLocal(tFinnal.x, tFinnal.y, tFinnal.z);
-            debug.AddLine(_node.worldRotation * tLocal + _node.worldPosition, _node.worldPosition, Color(0.5f, 0.5f, 0.7f), false);
+            Vector3 tMotionEnd = _node.worldRotation * tLocal + _node.worldPosition;
+            // debug.AddLine(_node.worldRotation * tLocal + _node.worldPosition, _node.worldPosition, Color(0.5f, 0.5f, 0.7f), false);
+            debug.AddSphere(Sphere(tMotionEnd, 0.25), debug_draw_color, false);
         }
         else {
             Vector4 tFinnal = GetKey(endTime);
-            Vector3 tMotionEnd = Quaternion(0, object.motion_startRotation + object.motion_deltaRotation, 0) * Vector3(tFinnal.x, tFinnal.y, tFinnal.z);
-            debug.AddLine(tMotionEnd + object.motion_startPosition,  object.motion_startPosition, Color(0.5f, 0.5f, 0.7f), false);
-            DebugDrawDirection(debug, _node, object.motion_startRotation + object.motion_deltaRotation + tFinnal.w, RED, 2.0);
+            Vector3 tMotionEnd = Quaternion(0, object.motion_startRotation, 0) * Vector3(tFinnal.x, tFinnal.y, tFinnal.z) + object.motion_startPosition;
+            // debug.AddLine(tMotionEnd + object.motion_startPosition,  oYELLOWbject.motion_startPosition, Color(0.5f, 0.5f, 0.7f), false);
+            // DebugDrawDirection(debug, _node.worldPosition, object.motion_startRotation + object.motion_deltaRotation + tFinnal.w, RED, 2.0);
+            float final_rotation = object.motion_startRotation + tFinnal.w;
+            debug.AddSphere(Sphere(tMotionEnd, 0.25), debug_draw_color, false);
+            DebugDrawDirection(debug, tMotionEnd, final_rotation, debug_draw_color, 3.0);
+
+            debug.AddSphere(Sphere(object.motion_startPosition, 0.25), RED, false);
+            DebugDrawDirection(debug, object.motion_startPosition, object.motion_startRotation, RED, 3.0);
         }
-        */
+
 
         if (!dockAlignBoneName.empty)
         {

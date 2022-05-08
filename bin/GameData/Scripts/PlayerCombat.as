@@ -556,16 +556,20 @@ class PlayerAttackState : CharacterState
 
     void DebugDraw(DebugRenderer@ debug)
     {
-        if (currentAttack is null || ownner.target is null)
-            return;
+        if (ownner.target !is null)
+        {
+            debug.AddLine(ownner.GetNode().worldPosition, ownner.target.GetNode().worldPosition, GREEN, false);
+            AddDebugMark(debug, targetPosition, TARGET_COLOR, 0.25f);
+            AddDebugMark(debug, motionPosition,  SOURCE_COLOR, 0.25f);
+        }
 
-        debug.AddLine(ownner.GetNode().worldPosition, ownner.target.GetNode().worldPosition, GREEN, false);
-        AddDebugMark(debug, targetPosition, TARGET_COLOR, 0.25f);
-        AddDebugMark(debug, motionPosition,  SOURCE_COLOR, 0.25f);
-        //Vector3 v = ownner.GetNode().worldPosition;
-        //DebugDrawDirection(debug, v, motionRotation, SOURCE_COLOR, 5.0f);
-        //DebugDrawDirection(debug, v, targetRotation, TARGET_COLOR, 5.0f);
-        currentAttack.DebugDraw(debug, ownner);
+        if (currentAttack !is null)
+        {
+            //Vector3 v = ownner.GetNode().worldPosition;
+            //DebugDrawDirection(debug, v, motionRotation, SOURCE_COLOR, 5.0f);
+            //DebugDrawDirection(debug, v, targetRotation, TARGET_COLOR, 5.0f);
+            currentAttack.DebugDraw(debug, ownner);
+        }
     }
 };
 
