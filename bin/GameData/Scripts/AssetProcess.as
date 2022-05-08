@@ -638,7 +638,8 @@ Animation@ FindAnimation(const String&in name)
 
 String GetAnimationName(const String&in name)
 {
-    return "Animations/" + name + "_Take 001.ani";
+    // return "Animations/" + name + "_Take 001.ani";
+    return "Animations/" + name + ".ani";
 }
 
 String FileNameToMotionName(const String&in name)

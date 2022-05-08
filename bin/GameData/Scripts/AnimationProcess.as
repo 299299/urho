@@ -12,6 +12,7 @@ const Array<String> ANIMATION_ARGS = {"-nm", "-nt", "-mb", String(MAX_BONES), "-
 String animationInFile;
 String animationOutFile;
 String mode;
+String rotateBoneName = "Bip01_$AssimpFbx$_PreRotation";
 
 void PreProcess()
 {
@@ -42,7 +43,37 @@ void DoProcess()
         return;
     }
 
+    if (animationOutFile == "")
+    {
+        animationOutFile = GetFileName(animationInFile) + "_" + mode + ".ani";
+    }
+
+    if (mode == "flip_z")
+    {
+        ProcessFlipZ(anim);
+    }
+
+
     return;
+}
+
+void ProcessFlipZ(Animation@ anim)
+{
+    AnimationTrack@ track = anim.tracks[rotateBoneName];
+    if (track is null)
+    {
+        Print ("can not find bone: " + rotateBoneName);
+        return;
+    }
+
+    for (uint i=0; i<track.numKeyFrames; ++i)
+    {
+        AnimationKeyFrame kf(track.keyFrames[i]);
+
+
+    }
+
+    anim.Save(animationOutFile);
 }
 
 void PostProcess()

@@ -120,3 +120,7 @@ libc++_shared.so
 android_app_build/
 
 /bin/GameData/Animations/
+/bin/Assets/
+/bin/TestData/
+/bin/ExportData/
+
