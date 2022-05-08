@@ -118,3 +118,5 @@ local.properties
 libUrho3D.so
 libc++_shared.so
 android_app_build/
+
+/bin/GameData/Animations/

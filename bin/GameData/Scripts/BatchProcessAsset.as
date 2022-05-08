@@ -4,7 +4,7 @@
 //
 // ==================================================================
 
-const String OUT_DIR = "MyData/";
+const String OUT_DIR = "GameData/";
 const String ASSET_DIR = "Asset/";
 const int MAX_BONES = 64; //75
 const Array<String> MODEL_ARGS = {"-na", "-l", "-cm", "-ct", "-nm", "-nt", "-mb", String(MAX_BONES), "-np", "-s", "Gundummy02"}; //"-t",

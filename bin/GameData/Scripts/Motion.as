@@ -713,7 +713,7 @@ void Global_AddAnimation(const String&in name)
 
 void Global_CreateMotion_InFolder(const String&in folder, Array<String>@ preFixToIgnore = null, Array<Motion@>@ motions = null, int motionFlag = kMotion_XZR)
 {
-    String searchFolder = "MyData/Animations/" + folder;
+    String searchFolder = "GameData/Animations/" + folder;
     if (GetPlatform() == "Android")
     {
         searchFolder = "/apk/" + searchFolder;

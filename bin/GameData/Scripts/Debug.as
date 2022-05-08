@@ -286,7 +286,7 @@ void HandleKeyDown(StringHash eventType, VariantMap& eventData)
         //String testName = ("BM_Railing/Railing_Climb_Down_Forward");
         //String testName = "BM_Climb/Stand_Climb_Up_256_Hang";
         //"Test/Attack_Close_Back_01"; //"BM_Climb/Walk_Climb_Down_128"; //"BM_Climb/Stand_Climb_Up_256_Hang";
-        String testName = lastPlayerMotion;
+        String testName = "BM_Attack/Attack_Close_Forward_02";//lastPlayerMotion;
         Player@ player = GetPlayer();
         testAnimations.Push(testName);
         //testAnimations.Push("BM_Climb/Dangle_Right");
