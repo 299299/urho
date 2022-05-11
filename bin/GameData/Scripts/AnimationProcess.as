@@ -64,8 +64,8 @@ void DoProcess()
 
 AnimationKeyFrame MirrorKeyframe(AnimationKeyFrame kf_)
 {
-    const Vector4 rot_(-1, 1, 1, -1);
-    const Vector3 t_(-1, 1, 1);
+    const Vector4 rot_(1, 1, -1, -1);
+    const Vector3 t_(1, 1, -1);
 
     AnimationKeyFrame kf(kf_);
     kf.position = kf.position * t_;
@@ -76,9 +76,23 @@ AnimationKeyFrame MirrorKeyframe(AnimationKeyFrame kf_)
     return kf;
 }
 
+AnimationKeyFrame MirrorKeyframe2(AnimationKeyFrame kf_)
+{
+    const Vector4 rot_(-1, -1, -1, -1);
+    const Vector3 t_(-1, -1, -1);
+
+    AnimationKeyFrame kf(kf_);
+    kf.position = kf.position * t_;
+    kf.rotation.x *= rot_.x;
+    kf.rotation.y *= rot_.y;
+    kf.rotation.z *= rot_.z;
+    kf.rotation.w *= rot_.w;
+    return kf;
+}
+
+
 void SwapAnimationTrack(AnimationTrack@ l_track, AnimationTrack@ r_track)
 {
-    const Vector4 rot_(-1, 1, 1, -1);
     // Print ("Swap " + l_track.name + " with " + r_track.name);
     for (uint i=0; i<l_track.numKeyFrames; ++i)
     {
@@ -100,8 +114,16 @@ void ProcessMirror(Animation@ anim)
     {
         AnimationTrack@ l_track = anim.GetTrack(i);
 
-        if (l_track.name.StartsWith("Bip01_$AssimpFbx$"))
-            continue;
+        // if (l_track.name.StartsWith("Bip01_$AssimpFbx$_"))
+        //     continue;
+        // if (l_track.name.StartsWith("Bip01_$AssimpFbx$_"))
+        //     continue;
+
+        // if (l_track.name == "Bip01")
+        //     continue;
+        // if (l_track.name == "Bip01_Pelvis")
+        //     continue;
+
         String l_bone_name = l_track.name;
         if (l_bone_name.StartsWith(mirrorBoneLKeyword))
         {
@@ -114,7 +136,20 @@ void ProcessMirror(Animation@ anim)
                 continue;
             }
             SwapAnimationTrack(l_track, r_track);
+            // Print ("Swap track");
         }
+        else if (l_bone_name.StartsWith(mirrorBoneRKeyword))
+        {
+        }
+        else if (l_track.name == "Bip01_Pelvis")
+        {
+            for (uint j=0; j<l_track.numKeyFrames; ++j)
+            {
+                AnimationKeyFrame l_kf(l_track.keyFrames[j]);
+                l_track.keyFrames[j] = MirrorKeyframe2(l_kf);
+            }
+        }
+        else if (l_track.name == "")
         else
         {
             for (uint j=0; j<l_track.numKeyFrames; ++j)
