@@ -129,6 +129,9 @@ class TerrainEditor
         Show();
 
         brushVisualizer.Create();
+
+        // added by golden, hide by default
+        Hide();
     }
 
     // Hide the window

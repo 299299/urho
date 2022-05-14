@@ -151,6 +151,9 @@ void CreateResourceBrowser()
     CreateResourceBrowserUI();
     InitResourceBrowserPreview();
     RebuildResourceDatabase();
+
+    // added by golden, hide resource brower by default
+    HideResourceBrowserWindow();
 }
 
 void RebuildResourceDatabase()
