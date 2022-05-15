@@ -8,9 +8,11 @@ const String OUT_DIR = "TestData/";
 const String ASSET_DIR = "ExportData/";
 const int MAX_BONES = 64; //75
 const Array<String> MODEL_ARGS = {"-na", "-l", "-cm", "-ct", "-nm", "-nt",
-                                  "-mb", String(MAX_BONES), "-np", "-s", "Gundummy02",
+                                  "-mb", String(MAX_BONES), "-np", "-s",
+                                  "Gundummy02", "Gundummy", "Bip01_Point_Gauntlet_Screen",
                                   "-t"}; //"-t",
-const Array<String> ANIMATION_ARGS = {"-nm", "-nt", "-mb", String(MAX_BONES), "-np", "-s", "Gundummy02"};
+const Array<String> ANIMATION_ARGS = {"-nm", "-nt", "-mb", String(MAX_BONES), "-np", "-s",
+                                      "Gundummy02", "Gundummy", "Bip01_Point_Gauntlet_Screen"};
 String exportFolder;
 
 const int EXPORT_MDL = 0;
