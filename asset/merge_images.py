@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     os.system ("mkdir -p " + output_folder_name)
 
-    files = glob.glob(search_pat)
+    files = glob.glob(search_pat, recursive=True)
     print (files)
 
     index = 0
