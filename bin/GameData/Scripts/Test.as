@@ -6,29 +6,41 @@
 
 // ------------------------------------------------
 #include "Scripts/Variables.as"
-#include "Scripts/Game.as"
-#include "Scripts/AssetProcess.as"
-#include "Scripts/Motion.as"
-#include "Scripts/PhysicsDrag.as"
-#include "Scripts/Input.as"
-#include "Scripts/FSM.as"
-#include "Scripts/Ragdoll.as"
-#include "Scripts/Camera.as"
-#include "Scripts/Menu.as"
-#include "Scripts/HeadIndicator.as"
-#include "Scripts/Follow.as"
-#include "Scripts/PhysicsMover.as"
-#include "Scripts/Debug.as"
+
 // ------------------------------------------------
-#include "Scripts/GameObject.as"
-#include "Scripts/Character.as"
-#include "Scripts/Enemy.as"
-#include "Scripts/Thug.as"
-#include "Scripts/Player.as"
-#include "Scripts/Bruce.as"
-#include "Scripts/DeathStroke.as"
-#include "Scripts/PlayerCombat.as"
-#include "Scripts/PlayerMovement.as"
+// Motion related
+#include "Scripts/Motion/AssetProcess.as"
+#include "Scripts/Motion/Motion.as"
+// ------------------------------------------------
+// game task related
+#include "Scripts/Task/FSM.as"
+#include "Scripts/Task/Game.as"
+// ------------------------------------------------
+// component related
+#include "Scripts/Component/PhysicsDrag.as"
+#include "Scripts/Component/Input.as"
+#include "Scripts/Component/Ragdoll.as"
+#include "Scripts/Component/Camera.as"
+#include "Scripts/Component/Follow.as"
+#include "Scripts/Component/PhysicsMover.as"
+// ------------------------------------------------
+// object related
+#include "Scripts/Object/GameObject.as"
+#include "Scripts/Object/Character.as"
+#include "Scripts/Object/Enemy.as"
+#include "Scripts/Object/Thug.as"
+#include "Scripts/Object/Player.as"
+#include "Scripts/Object/Bruce.as"
+#include "Scripts/Object/DeathStroke.as"
+#include "Scripts/Object/PlayerCombat.as"
+#include "Scripts/Object/PlayerMovement.as"
+// ------------------------------------------------
+// UI related
+#include "Scripts/UI/Menu.as"
+#include "Scripts/UI/HeadIndicator.as"
+// ------------------------------------------------
+// debug related
+#include "Scripts/Debug/Debug.as"
 
 void Start()
 {
