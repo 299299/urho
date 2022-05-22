@@ -17,7 +17,7 @@ class Gif
     {
         name = name_;
         length = num_;
-        for (int i=0; i<length; ++i)
+        for (int i=1; i<=length; ++i)
         {
             textures.Push(cache.GetResource("Texture2D", "Textures/" + name + "_" + i + ".tga"));
         }
@@ -34,8 +34,15 @@ class Gif
         sprite.blendMode = BLEND_REPLACE;
         sprite.visible = true;
         sprite.texture = textures[index];
-        sprite.size = IntVector2(size, size);
-        sprite.hotSpot = IntVector2(size/2, size/2);
+        // sprite.size = IntVector2(size, size);
+        // sprite.hotSpot = IntVector2(size/2, size/2);
+
+        int textureWidth = sprite.texture.width;
+        int textureHeight = sprite.texture.height;
+        sprite.SetScale(size / textureWidth);
+        sprite.SetSize(textureWidth, textureHeight);
+        sprite.SetHotSpot(textureWidth/2, textureHeight/2);
+        sprite.SetPosition(graphics.width/2 - textureWidth/2, graphics.height/2 - textureHeight/2);
     }
 
     void Stop()

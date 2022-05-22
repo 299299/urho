@@ -11,8 +11,9 @@ class LoadingState : GameState
     int                 state = -1;
     int                 numLoadedResources = 0;
     Scene@              preloadScene;
-
     float               loadingTestTime = 10.0;
+
+    Gif@                loadingGif;
 
     LoadingState()
     {
@@ -49,17 +50,21 @@ class LoadingState : GameState
         text.textEffect = TE_STROKE;
         text.AddTag(TAG_LOADING);
 
-        Texture2D@ loadingTexture = cache.GetResource("Texture2D", "Textures/Loading.tga");
-        Sprite@ loadingSprite = ui.root.CreateChild("Sprite", "loading_bg");
-        loadingSprite.texture = loadingTexture;
-        textureWidth = loadingTexture.width;
-        textureHeight = loadingTexture.height;
-        loadingSprite.SetSize(textureWidth, textureHeight);
-        loadingSprite.SetPosition(graphics.width/2 - textureWidth/2, graphics.height/2 - textureHeight/2);
-        loadingSprite.priority = -100;
-        loadingSprite.opacity = 0.0f;
-        loadingSprite.AddTag(TAG_LOADING);
-        loadingSprite.SetAttributeAnimation("Opacity", alphaAnimation);
+        // Texture2D@ loadingTexture = cache.GetResource("Texture2D", "Textures/Loading.tga");
+        // Sprite@ loadingSprite = ui.root.CreateChild("Sprite", "loading_bg");
+        // loadingSprite.texture = loadingTexture;
+        // textureWidth = loadingTexture.width;
+        // textureHeight = loadingTexture.height;
+        // loadingSprite.SetSize(textureWidth, textureHeight);
+        // loadingSprite.SetPosition(graphics.width/2 - textureWidth/2, graphics.height/2 - textureHeight/2);
+        // loadingSprite.priority = -100;
+        // loadingSprite.opacity = 0.0f;
+        // loadingSprite.AddTag(TAG_LOADING);
+        // loadingSprite.SetAttributeAnimation("Opacity", alphaAnimation);
+
+        if (loadingGif is null)
+            @loadingGif = Gif("UI/Loading", 20, 256, 0.1, true);
+        loadingGif.Start();
     }
 
     void Enter(State@ lastState)
@@ -75,6 +80,7 @@ class LoadingState : GameState
         Array<UIElement@>@ elements = ui.root.GetChildrenWithTag(TAG_LOADING);
         for (uint i = 0; i < elements.length; ++i)
             elements[i].Remove();
+        loadingGif.Stop();
     }
 
     void Update(float dt)
@@ -116,6 +122,9 @@ class LoadingState : GameState
                 gGame.ChangeState("TestGameState");
             }
         }
+
+        if (loadingGif !is null)
+            loadingGif.Update(dt);
 
         GameState::Update(dt);
     }
