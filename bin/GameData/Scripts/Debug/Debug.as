@@ -51,7 +51,7 @@ void ShootSphere(Scene@ _scene)
     body.linearVelocity = cameraNode.rotation * Vector3(0.0f, 0.25f, 1.0f) * 10.0f;
 }
 
-void DrawDebug(float dt)
+void DrawDebugScene()
 {
     Scene@ scene_ = script.defaultScene;
     if (scene_ is null)
@@ -59,6 +59,7 @@ void DrawDebug(float dt)
 
     EnemyManager@ em = GetEnemyMgr();
     Player@ p = GetPlayer();
+    DebugRenderer@ debug = scene_.debugRenderer;
 
     if (!scene_.updateEnabled)
     {
@@ -80,16 +81,6 @@ void DrawDebug(float dt)
         }
     }
 
-    DebugRenderer@ debug = scene_.debugRenderer;
-    if (debug_draw_flag == 0)
-    {
-        return;
-    }
-
-    DrawDebugText();
-
-    gDebugMgr.Update(debug, dt);
-
     if (debug_draw_flag > 0)
     {
         debug.AddNode(scene_, 1.0f, false);
@@ -110,6 +101,7 @@ void DrawDebug(float dt)
             AddDebugMark(debug, p.GetNode().GetChild(R_CALF, true).worldPosition, c, s);
         }
     }
+
     if (debug_draw_flag > 1)
     {
         if (em !is null)
@@ -132,6 +124,19 @@ void DrawDebug(float dt)
         if (pw !is null)
             pw.DrawDebugGeometry(true);
     }
+}
+
+void DrawDebugEntry(float dt)
+{
+    DrawDebugScene();
+    DrawDebugText();
+
+    Scene@ scene_ = script.defaultScene;
+    if (scene_ !is null)
+    {
+        gDebugMgr.Update(scene_.debugRenderer, dt);
+    }
+
 
     // for (float a = 15.0; a < 360.0; a += 15.0)
     // {
@@ -731,6 +736,9 @@ void AddDebugMark(DebugRenderer@ debug, const Vector3&in position, const Color&i
 
 void DrawDebugText()
 {
+    if (debug_draw_flag <= 0)
+        return;
+
     Text@ text = ui.root.GetChild("debug", true);
     if (text is null)
         return;

@@ -15,6 +15,8 @@
 // game task related
 #include "Scripts/Task/FSM.as"
 #include "Scripts/Task/Game.as"
+#include "Scripts/Task/Loading.as"
+#include "Scripts/Task/CombatGame.as"
 // ------------------------------------------------
 // component related
 #include "Scripts/Component/PhysicsDrag.as"
@@ -38,6 +40,7 @@
 // UI related
 #include "Scripts/UI/Menu.as"
 #include "Scripts/UI/HeadIndicator.as"
+#include "Scripts/UI/Gif.as"
 // ------------------------------------------------
 // debug related
 #include "Scripts/Debug/Debug.as"
@@ -94,6 +97,9 @@ void Start()
     CreateDebugHud();
     CreateUI();
     InitAudio();
+
+    // debug
+    CreateDebugUI();
 
     SubscribeToEvents();
 
@@ -287,7 +293,7 @@ void HandleUpdate(StringHash eventType, VariantMap& eventData)
 
 void HandlePostRenderUpdate(StringHash eventType, VariantMap& eventData)
 {
-    DrawDebug(eventData["TimeStep"].GetFloat());
+    DrawDebugEntry(eventData["TimeStep"].GetFloat());
 }
 
 void HandleSceneLoadFinished(StringHash eventType, VariantMap& eventData)
@@ -511,7 +517,7 @@ class BM_Game_MotionManager : MotionManager
     {
         CreateBruceMotions();
         CreateThugMotions();
-        CreateDeathStrokeMotions();
+        // CreateDeathStrokeMotions();
     }
 
     void AddTriggers()

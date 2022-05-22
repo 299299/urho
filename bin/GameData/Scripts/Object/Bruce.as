@@ -192,7 +192,7 @@ void CreateBruceMotions()
     preFix = "BM_Combat/";
     Global_CreateMotion(preFix + "Into_Takedown");
 
-    CreateBruceCombatMotions();
+    // CreateBruceCombatMotions();
 }
 
 void CreateBruceCombatMotions()
