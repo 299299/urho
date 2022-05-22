@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<material>
-	<technique name="Techniques/Diff.xml" />
-	<texture unit="diffuse" name="Textures/Batman_BM3_V2_head_Unmasked_MAT_INST" />
-	<parameter name="MatDiffColor" value="0.588 0.588 0.588 1" />
-	<parameter name="MatSpecColor" value="0 0 0 2" />
-	<parameter name="MatEmissiveColor" value="0 0 0 1" />
-</material>
