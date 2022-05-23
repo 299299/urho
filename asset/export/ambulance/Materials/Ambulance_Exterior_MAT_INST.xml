@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<material>
+    <technique name="Techniques/DiffNormalSpec.xml" />
+    <texture unit="diffuse" name="ambulance/Textures/Ambulance_Exterior_D.tga" />
+    <texture unit="normal" name="ambulance/Textures/Ambulance_Exterior_N.tga" />
+    <texture unit="specular" name="ambulance/Textures/Ambulance_Exterior_S.tga" />
+    <parameter name="MatDiffColor" value="1.0 1.0 1.0 1" />
+    <parameter name="MatSpecColor" value="1.0 1.0 1.0 50" />
+    <parameter name="MatEmissiveColor" value="1.0 1.0 1.0 1" />
+</material>

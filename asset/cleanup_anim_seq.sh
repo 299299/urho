@@ -3,4 +3,4 @@
 
 folder_name=$1
 
-./cleanup_anim_seq.py /Users/golden/Downloads/game_resource/batman_knight/ExportOutput/**/AnimSequence_*
+./move_files.py /Users/golden/Downloads/game_resource/batman_knight/ExportOutput/**/AnimSequence_*
