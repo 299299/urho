@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<material>
+    <technique name="Techniques/@tech.xml" />
+    <texture unit="diffuse" name="@diffuse" />
+    <texture unit="normal" name="@normal" />
+    <texture unit="specular" name="@specular" />
+    <texture unit="emissive" name="@emissive" />
+    <parameter name="MatDiffColor" value="1.0 1.0 1.0 1" />
+    <parameter name="MatSpecColor" value="1.0 1.0 1.0 50" />
+</material>

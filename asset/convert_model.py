@@ -10,12 +10,14 @@ assimp_tool = "/build_osx/bin/tool/AssetImporter"
 git_root_cmd = "git rev-parse --show-toplevel"
 output_path = './export/'
 raw_asset_path = '/Users/golden/Downloads/game_resource/batman/'
-mat_template_file1 = './mat_template_1.xml'
+mat_template_file = './mat_template.xml'
+obj_template_file = './obj_template.xml'
+asset_output_path = 'Objects/'
 
 def prepare_dir(dir):
     os.system("mkdir -p " + dir)
 
-def process_material(mat_name, output_folder, output_model_name, mat_template1):
+def process_material(mat_name, output_folder, output_model_name, mat_template):
     print ("processing material " + mat_name)
 
     search_pat = raw_asset_path + '**/' + mat_name + '*.mat'
@@ -61,7 +63,7 @@ def process_material(mat_name, output_folder, output_model_name, mat_template1):
     emissive = find_texture(mat_path, emissive)
 
     output_texture_folder = output_folder + "Textures/"
-    texture_base_path = output_model_name + "/Textures/"
+    texture_base_path = asset_output_path + output_model_name + "/Textures/"
 
     if diff:
         os.system('cp -f ' + diff + ' ' + output_texture_folder)
@@ -94,7 +96,7 @@ def process_material(mat_name, output_folder, output_model_name, mat_template1):
             if diff and emissive:
                 tech = 'DiffEmissive'
 
-    mat_text = mat_template1.replace('@tech', tech)
+    mat_text = mat_template.replace('@tech', tech)
     if diff:
         mat_text = mat_text.replace('@diffuse', diff)
     if normal:
@@ -130,6 +132,10 @@ def find_texture(mat_path, text_name):
         ret = None
     return ret
 
+def process_object(obj_name, output_folder, output_model_name, obj_template, mat_list):
+    asset_model_name = asset_output_path + output_model_name + '/' + output_model_name + '.mdl'
+    print (asset_model_name)
+
 if __name__ == "__main__":
     print (sys.argv)
 
@@ -153,10 +159,13 @@ if __name__ == "__main__":
     print (run_cmd)
     os.system(run_cmd)
 
-    with open(mat_template_file1) as f:
-        mat_template1 = f.read()
+    with open(mat_template_file) as f:
+        mat_template = f.read()
 
-    # print (mat_template1)
+    with open(obj_template_file) as f:
+        obj_template = f.read()
+
+    # print (mat_template)
 
     with open(output_txt) as f:
         mat_list = f.read().splitlines()
@@ -165,5 +174,7 @@ if __name__ == "__main__":
         mat_name = os.path.splitext(mat_file)[0]
         mat_name = os.path.basename(mat_name)
 
-        process_material(mat_name, output_folder, output_model_name, mat_template1)
+        process_material(mat_name, output_folder, output_model_name, mat_template)
 
+
+    process_object(output_model_name, output_folder, output_model_name, obj_template)
