@@ -105,6 +105,9 @@ def process_material(mat_name, output_folder, output_model_name, mat_template):
         mat_text = mat_text.replace('@specular', specular)
     if emissive:
         mat_text = mat_text.replace('@emissive', emissive)
+        mat_text = mat_text.replace('@color_emissive', '1.0 1.0 1.0 1.0')
+    else:
+        mat_text = mat_text.replace('@color_emissive', '0.0 0.0 0.0 1.0')
 
     #print (mat_text)
     mat_lines = mat_text.splitlines()
@@ -132,27 +135,75 @@ def find_texture(mat_path, text_name):
         ret = None
     return ret
 
-def process_object(obj_name, output_folder, output_model_name, obj_template, mat_list):
+def process_object(obj_name, output_folder, output_model_name, obj_template, mat_list, b_overwrite):
+    output_object_file = output_folder + output_model_name + '.xml'
+
+    if os.path.exists(output_object_file) and not b_overwrite:
+        print (output_object_file + ' already exist!')
+        return
+
     asset_model_name = asset_output_path + output_model_name + '/' + output_model_name + '.mdl'
-    print (asset_model_name)
+    # print (asset_model_name)
+
+    obj_xml = obj_template.replace('@name', output_model_name)
+    obj_xml = obj_xml.replace('@model', asset_model_name)
+
+    asset_mat = ''
+    for mat in mat_list:
+        #print (mat)
+        asset_mat += asset_output_path + output_model_name + '/' + mat + ';'
+        #print (asset_mat)
+
+    #print (asset_mat)
+    asset_mat = asset_mat.rstrip(';')
+    obj_xml = obj_xml.replace('@material', asset_mat)
+    #print (obj_xml)
+
+    with open(output_object_file, 'w') as f:
+        f.write(obj_xml)
+
 
 if __name__ == "__main__":
+
+    print(r"""\
+
+                               ._ o o
+                               \_`-)|_
+                            ,""       \
+                          ,"  ## |   ಠ ಠ.
+                        ," ##   ,-\__    `.
+                      ,"       /     `--._;)
+                    ,"     ## /
+                  ,"   ##    /
+
+
+            """)
+    print ("convert_model.py [input model file] [options]")
+    print ("-f to force overwrite object xml file")
+
     print (sys.argv)
+    git_root = subprocess.getoutput(git_root_cmd)
+    print (git_root)
 
     input_model = sys.argv[1]
+    b_overwrite = False
+
+    if len(sys.argv) > 2 and sys.argv[2] == '-f':
+        b_overwrite = True
 
     file_name_without_ext = os.path.splitext(input_model)[0]
     output_model_name = os.path.basename(file_name_without_ext)
 
-    output_folder = output_path + output_model_name + '/'
+    #output_folder = output_path + output_model_name + '/'
+    output_folder = git_root + '/bin/GameData/' + asset_output_path + output_model_name + '/'
+
+    print ('output_folder=' + output_folder)
 
     prepare_dir (output_folder)
 
     output_model = output_folder + output_model_name +  ".mdl"
     output_txt = output_folder + output_model_name +  ".txt"
 
-    git_root = subprocess.getoutput(git_root_cmd)
-    print (git_root)
     tool = git_root + assimp_tool
 
     run_cmd = tool + " model " + input_model + " " + output_model + " " + model_args
@@ -177,4 +228,5 @@ if __name__ == "__main__":
         process_material(mat_name, output_folder, output_model_name, mat_template)
 
 
-    process_object(output_model_name, output_folder, output_model_name, obj_template)
+    process_object(output_model_name, output_folder, output_model_name, obj_template, mat_list, b_overwrite)
+

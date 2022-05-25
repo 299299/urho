@@ -1,4 +1,0 @@
-Materials/Ambulance_Exterior_MAT_INST.xml
-Materials/Ambulance_Glass_MAT_INST.xml
-Materials/Ambulance_Glass_MAT_INST.xml
-Materials/Ambulance_Glass_MAT_INST.xml
