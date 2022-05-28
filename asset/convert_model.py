@@ -222,6 +222,8 @@ if __name__ == "__main__":
     with open(output_txt) as f:
         mat_list = f.read().splitlines()
 
+    os.system('rm ' + output_txt)
+
     for mat_file in mat_list:
         mat_name = os.path.splitext(mat_file)[0]
         mat_name = os.path.basename(mat_name)
