@@ -374,7 +374,12 @@ void CreateMenuBar()
         popup.AddChild(CreateMenuItem("Paste", @Paste, KEY_V, QUAL_CTRL));
 
         if (hotKeyMode == HOTKEYS_MODE_STANDARD)
-            popup.AddChild(CreateMenuItem("Delete", @Delete, KEY_DELETE, QUAL_ANY));
+        {
+            if (GetPlatform() == "macOS")
+                popup.AddChild(CreateMenuItem("Delete", @Delete, KEY_X, QUAL_ANY));
+            else
+                popup.AddChild(CreateMenuItem("Delete", @Delete, KEY_DELETE, QUAL_ANY));
+        }
         else if (hotKeyMode == HOTKEYS_MODE_BLENDER)
             popup.AddChild(CreateMenuItem("Delete", @BlenderModeDelete, KEY_X, QUAL_ANY));
 
