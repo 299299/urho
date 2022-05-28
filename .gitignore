@@ -123,4 +123,6 @@ android_app_build/
 /bin/Assets/
 /bin/TestData/
 /bin/ExportData/
+/asset/ExportData/
 
+/bin/GameData/Export_Objects/

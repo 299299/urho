@@ -12,7 +12,8 @@ output_path = './export/'
 raw_asset_path = '/Users/golden/Downloads/game_resource/batman/'
 mat_template_file = './mat_template.xml'
 obj_template_file = './obj_template.xml'
-asset_output_path = 'Objects/'
+asset_output_folder = 'GameData/'
+asset_output_path = 'Export_Objects/'
 
 def prepare_dir(dir):
     os.system("mkdir -p " + dir)
@@ -195,7 +196,7 @@ if __name__ == "__main__":
     output_model_name = os.path.basename(file_name_without_ext)
 
     #output_folder = output_path + output_model_name + '/'
-    output_folder = git_root + '/bin/GameData/' + asset_output_path + output_model_name + '/'
+    output_folder = git_root + '/bin/' + asset_output_folder + asset_output_path + output_model_name + '/'
 
     print ('output_folder=' + output_folder)
 

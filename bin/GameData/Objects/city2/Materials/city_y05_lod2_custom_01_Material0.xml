@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<material>
-    <technique name="Techniques/DiffEmissive.xml" />
-    <texture unit="diffuse" name="BaseWhite" />
-    <texture unit="emissive" name="Objects/city2/Textures/city_y05_lod2_custom_01_Texture_E_0.tga" />
-    <parameter name="MatDiffColor" value="1.0 1.0 1.0 1" />
-    <parameter name="MatSpecColor" value="1.0 1.0 1.0 1" />
-    <parameter name="MatEmissiveColor" value="1.0 1.0 1.0 1.0" />
-</material>

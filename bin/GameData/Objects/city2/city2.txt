@@ -1,1 +1,0 @@
-Materials/city_y05_lod2_custom_01_Material0.xml
