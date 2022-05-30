@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<material>
+    <technique name="Techniques/DiffEmissive.xml" />
+    <texture unit="diffuse" name="Objects/batman_full/Textures/Batman_BM3_V2_Teeth_D.tga" />
+    <texture unit="specular" name="Objects/batman_full/Textures/Batman_BM3_V2_Teeth_R.tga" />
+    <texture unit="emissive" name="Objects/batman_full/Textures/Batman_BM3_V2_Iris_E.tga" />
+    <parameter name="MatDiffColor" value="0.6 0.6 0.6 1" />
+    <parameter name="MatSpecColor" value="1.0 1.0 1.0 1" />
+    <parameter name="MatEmissiveColor" value="1.0 1.0 1.0 1.0" />
+</material>

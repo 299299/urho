@@ -10,8 +10,7 @@ class BatmanStandState : PlayerStandState
     {
         super(c);
         AddMotion(BATMAN_MOVEMENT_GROUP + "Stand_Idle");
-        AddMotion(BATMAN_MOVEMENT_GROUP + "Stand_Idle_01");
-        AddMotion(BATMAN_MOVEMENT_GROUP + "Stand_Idle_02");
+        AddMotion(BATMAN_MOVEMENT_GROUP + "Stand_Idle_Combat");
     }
 };
 
@@ -55,10 +54,9 @@ void CreateBatmanMotions()
 {
     AssignMotionRig("Objects/batman/batman.mdl");
 
-    String preFix = BRUCE_MOVEMENT_GROUP;
+    String preFix = BATMAN_MOVEMENT_GROUP;
     Global_AddAnimation(preFix + "Stand_Idle");
-    Global_AddAnimation(preFix + "Stand_Idle_01");
-    Global_AddAnimation(preFix + "Stand_Idle_02");
+    Global_AddAnimation(preFix + "Stand_Idle_Combat");
     Global_CreateMotion(preFix + "Run_Forward", kMotion_Z, kMotion_Z, -1, true);
 
     int locomotionFlags = kMotion_XZR;

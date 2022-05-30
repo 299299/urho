@@ -8,7 +8,7 @@ enum StateIndicator
 class HeadIndicator : ScriptObject
 {
     Vector3 offset = Vector3(0, 1.5f, 0);
-    uint headNodeId;
+    uint headNodeId = 0;
     int state = -1;
     Array<Texture2D@> textures;
     Sprite@ sprite;
@@ -33,7 +33,9 @@ class HeadIndicator : ScriptObject
 
     void DelayedStart()
     {
-        headNodeId = node.GetChild(HEAD, true).id;
+        Node@ headNode = node.GetChild(HEAD, true);
+        if (headNode !is null)
+            headNodeId = headNode.id;
     }
 
     void Stop()
@@ -47,6 +49,8 @@ class HeadIndicator : ScriptObject
 
     void Update(float dt)
     {
+        if (headNodeId == 0)
+            return;
         Node@ headNode = node.scene.GetNode(headNodeId);
         if (headNode is null)
             return;
