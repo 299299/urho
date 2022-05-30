@@ -163,6 +163,13 @@ const String BRUCE_MOVEMENT_GROUP = "BM_Combat_Movement/";
 
 // ==============================================
 //
+//    BATMAN GLOBAL
+//
+// ==============================================
+const String BATMAN_MOVEMENT_GROUP = "BM_Movement/";
+
+// ==============================================
+//
 //    CAMERA GLOBAL
 //
 // ==============================================
@@ -274,8 +281,8 @@ int debug_mode = 2;
 const String preload_scene_name = "Scenes/animation.xml";
 const String game_scene_name = "Scenes/1.xml";
 
-const String playerClassName = "Bruce"; // DeathStroke
-const String playerObjectName = "elm";
+const String playerClassName = "Batman"; // Bruce, DeathStroke
+const String playerObjectName = "batman/batman";//"elm";
 
 String lastPlayerMotion = "";
 

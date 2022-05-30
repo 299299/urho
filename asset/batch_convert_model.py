@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     #print (fbx_files)
     for fbx in fbx_files:
-        cmd = 'python3 ' + model_convert_script + ' ' + fbx
+        cmd = 'python3 ' + model_convert_script + ' ' + fbx + ' Export_Objects/'
         # print (cmd)
         os.system(cmd)
 

@@ -36,6 +36,7 @@
 #include "Scripts/Object/DeathStroke.as"
 #include "Scripts/Object/PlayerCombat.as"
 #include "Scripts/Object/PlayerMovement.as"
+#include "Scripts/Object/Batman.as"
 // ------------------------------------------------
 // UI related
 #include "Scripts/UI/Menu.as"
@@ -515,16 +516,18 @@ class BM_Game_MotionManager : MotionManager
 
     void AddMotions()
     {
-        CreateBruceMotions();
-        CreateThugMotions();
+        // CreateBruceMotions();
+        // CreateThugMotions();
         // CreateDeathStrokeMotions();
+        CreateBatmanMotions();
     }
 
     void AddTriggers()
     {
-        AddBruceAnimationTriggers();
-        AddThugAnimationTriggers();
-        AddDeathStrokeAnimationTriggers();
+        AddBatmanAnimationTriggers();
+        // AddBruceAnimationTriggers();
+        // AddThugAnimationTriggers();
+        // AddDeathStrokeAnimationTriggers();
     }
 
     void Stop()

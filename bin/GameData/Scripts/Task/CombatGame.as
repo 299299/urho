@@ -343,7 +343,12 @@ class TestGameState : GameState
 
         Node@ playerNode = CreateCharacter("player", playerObjectName, playerClassName, playerPos, playerRot);
         playerNode.AddTag(PLAYER_TAG);
-        audio.listener = playerNode.GetChild(HEAD, true).CreateComponent("SoundListener");
+        Node@ audio_node = playerNode.GetChild(HEAD, true);
+        if (audio_node is null)
+        {
+            audio_node = playerNode.GetChild(NECK, true);
+        }
+        audio.listener = audio_node.CreateComponent("SoundListener");
         player_id = playerNode.id;
 
         // preprocess current scene

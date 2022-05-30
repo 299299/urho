@@ -12,19 +12,21 @@ output_path = './export/'
 raw_asset_path = '/Users/golden/Downloads/game_resource/batman/'
 mat_template_file = './mat_template.xml'
 obj_template_file = './obj_template.xml'
+character_template_file = './character_template.xml'
 asset_output_folder = 'GameData/'
-asset_output_path = 'Export_Objects/'
+# asset_output_path = 'Export_Objects/'
 
 def prepare_dir(dir):
     os.system("mkdir -p " + dir)
 
-def process_material(mat_name, output_folder, output_model_name, mat_template):
+def process_material(mat_name, output_folder, output_model_name, mat_template, asset_output_path, b_character, b_overwrite):
     print ("processing material " + mat_name)
 
     search_pat = raw_asset_path + '**/' + mat_name + '*.mat'
     mat_files = glob.glob(search_pat, recursive=True)
 
     if len(mat_files) == 0:
+        print (mat_name + ' not found !!')
         return
 
     mat_file = mat_files[0]
@@ -42,10 +44,11 @@ def process_material(mat_name, output_folder, output_model_name, mat_template):
         tex_list = text_file.read().splitlines()
 
     #print (tex_list)
-
+    tex_pairs = []
     for tex_line in tex_list:
-        tex_words = tex_line.split('=')
+        tex_pairs.append (tex_line.split('='))
 
+    for tex_words in tex_pairs:
         if tex_words[0] == 'Diffuse':
             diff = tex_words[1]
         if tex_words[0] == 'Normal':
@@ -56,6 +59,19 @@ def process_material(mat_name, output_folder, output_model_name, mat_template):
             specular = tex_words[1]
         if tex_words[0] == 'Emissive':
             emissive = tex_words[1]
+
+        if tex_words[1].endswith('_D'):
+            diff = tex_words[1]
+        if tex_words[1].endswith('_N'):
+            normal = tex_words[1]
+
+    # if diff is None:
+    #     for tex_words in tex_pairs:
+    #         if tex_words[1].endswith('_D'):
+    #             diff = tex_words[1]
+    #     for tex_words in tex_pairs:
+    #         if tex_words[1].endswith('_N'):
+    #             normal = tex_words[1]
 
     #print (mat_path)
     diff = find_texture(mat_path, diff)
@@ -116,6 +132,10 @@ def process_material(mat_name, output_folder, output_model_name, mat_template):
     output_mat_file = output_folder + 'Materials/' + mat_name + '.xml';
     #print (output_mat_file)
 
+    if os.path.exists(output_mat_file) and not b_overwrite:
+        print (output_mat_file + ' already exist!')
+        return
+
     with open(output_mat_file, 'w') as output_mat:
         for mat_line in mat_lines:
             if '@' in mat_line:
@@ -127,7 +147,7 @@ def find_texture(mat_path, text_name):
     if not text_name:
         return None
 
-    search_pat = mat_path + '/../' + '**/' + text_name + '.tga'
+    search_pat = mat_path + '/../../' + '**/' + text_name + '.tga'
     #print (search_pat)
     diff_list = glob.glob(search_pat, recursive=True)
     if len(diff_list) > 0:
@@ -136,7 +156,7 @@ def find_texture(mat_path, text_name):
         ret = None
     return ret
 
-def process_object(obj_name, output_folder, output_model_name, obj_template, mat_list, b_overwrite):
+def process_object(obj_name, output_folder, output_model_name, obj_template, mat_list, b_overwrite, asset_output_path):
     output_object_file = output_folder + output_model_name + '.xml'
 
     if os.path.exists(output_object_file) and not b_overwrite:
@@ -179,18 +199,27 @@ if __name__ == "__main__":
 
 
             """)
-    print ("convert_model.py [input model file] [options]")
+    print ("convert_model.py [input model file] [output path] [options]")
     print ("-f to force overwrite object xml file")
+    print ("-c to specify the character")
 
-    print (sys.argv)
+    argv = sys.argv
+    argv = argv[1:]
+
+    print (argv)
     git_root = subprocess.getoutput(git_root_cmd)
     print (git_root)
 
-    input_model = sys.argv[1]
+    input_model = argv[0]
+    asset_output_path = argv[1]
     b_overwrite = False
+    b_character = False
 
-    if len(sys.argv) > 2 and sys.argv[2] == '-f':
-        b_overwrite = True
+    for arg in argv:
+        if arg == '-f':
+            b_overwrite = True
+        if arg == '-c':
+            b_character = True
 
     file_name_without_ext = os.path.splitext(input_model)[0]
     output_model_name = os.path.basename(file_name_without_ext)
@@ -214,22 +243,26 @@ if __name__ == "__main__":
     with open(mat_template_file) as f:
         mat_template = f.read()
 
-    with open(obj_template_file) as f:
-        obj_template = f.read()
+    if b_character:
+        with open(character_template_file) as f:
+            obj_template = f.read()
+    else:
+        with open(obj_template_file) as f:
+            obj_template = f.read()
 
     # print (mat_template)
 
     with open(output_txt) as f:
         mat_list = f.read().splitlines()
 
-    os.system('rm ' + output_txt)
+    #os.system('rm ' + output_txt)
 
     for mat_file in mat_list:
         mat_name = os.path.splitext(mat_file)[0]
         mat_name = os.path.basename(mat_name)
 
-        process_material(mat_name, output_folder, output_model_name, mat_template)
+        process_material(mat_name, output_folder, output_model_name, mat_template, asset_output_path, b_character, b_overwrite)
 
 
-    process_object(output_model_name, output_folder, output_model_name, obj_template, mat_list, b_overwrite)
+    process_object(output_model_name, output_folder, output_model_name, obj_template, mat_list, b_overwrite, asset_output_path)
 

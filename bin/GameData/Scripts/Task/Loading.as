@@ -11,7 +11,7 @@ class LoadingState : GameState
     int                 state = -1;
     int                 numLoadedResources = 0;
     Scene@              preloadScene;
-    float               loadingTestTime = 10.0;
+    float               loadingTestTime = 1.0;
 
     Gif@                loadingGif;
 

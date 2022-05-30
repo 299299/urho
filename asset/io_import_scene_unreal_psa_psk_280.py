@@ -1635,9 +1635,9 @@ def psaimport(filepath,
                 if   flag_str[0] == 'a': #all
                     AnimFlags[action_name][bone_index] = Flags(True, True)
                 elif flag_str[0] == 't': #trans
-                    AnimFlags[action_name][bone_index].no_translation = True
+                    AnimFlags[action_name][bone_index] = Flags(True, False)
                 elif flag_str[0] == 'r': #rot
-                    AnimFlags[action_name][bone_index].no_rotation = True
+                    AnimFlags[action_name][bone_index] = Flags(False, True)
 
                 # print(AnimFlags[action_name][bone_index])
 

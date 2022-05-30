@@ -111,7 +111,10 @@ class Ragdoll : ScriptObject
         for (int i=0; i<maxLen; ++i)
         {
             boneNodes[i] = node.GetChild(boneNames[i], true);
-            boneNodes[i].vars[NODE] = node.id;
+            if (boneNodes[i] !is null)
+                boneNodes[i].vars[NODE] = node.id;
+            else
+                Print (boneNames[i] + " bone not found !!!");
         }
 
         Node@ renderNode = node;
