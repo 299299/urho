@@ -238,7 +238,7 @@ void HandleKeyDown(StringHash eventType, VariantMap& eventData)
         Player@ p = GetPlayer();
         p.SetTimeScale((p.timeScale > 1.0f) ? 1.0f : 1.25f);
     }
-    else if (key == KEY_E)
+    else if (key == KEY_H)
     {
         Text@ text = ui.root.GetChild("instruction", true);
         if (text !is null)
@@ -299,7 +299,7 @@ void HandleKeyDown(StringHash eventType, VariantMap& eventData)
         if (player !is null)
             player.TestAnimation(testAnimations);
     }
-    else if (key == KEY_H)
+    else if (key == KEY_E)
         TestAnimations_Group_SingleCounter();
     else if (key == KEY_J)
         TestAnimations_Group_DoubleCounter();
@@ -1122,11 +1122,11 @@ void CreateDebugUI()
                            "0 -> dump debug text\n"
                            "+ -> debug animation increase frame \n"
                            "- -> debug animation decrease frame \n"
-                           "E -> show/hide debug instruction \n"
+                           "H -> show/hide debug instruction \n"
                            "R -> pause current scene \n"
                            "F -> test attack animation \n"
                            "G -> test single animation \n"
-                           "H -> test single counter animation \n"
+                           "E -> test single counter animation \n"
                            "J -> test double counter animation \n"
                            "K -> test triple counter animation \n"
                            "L -> test env counter animation \n"

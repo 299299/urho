@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<material>
-    <technique name="Techniques/DiffNormal.xml" />
-    <texture unit="diffuse" name="Objects/batman_full/Textures/Batman_BM3_V2_Head_D.tga" />
-    <texture unit="normal" name="Objects/batman_full/Textures/Batman_BM3_V2_Head_N.tga" />
-    <parameter name="MatDiffColor" value="0.6 0.6 0.6 1" />
-    <parameter name="MatSpecColor" value="1.0 1.0 1.0 1" />
-    <parameter name="MatEmissiveColor" value="0.0 0.0 0.0 1.0" />
-</material>
