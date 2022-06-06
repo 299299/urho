@@ -1,5 +1,0 @@
-Materials/DLC_Batman_New52_Torso.xml
-Materials/DLC_Batman_New52_GlovesAndBelts.xml
-Materials/DLC_Batman_New52_Legs.xml
-Materials/DLC_Batman_New52_Boots.xml
-Materials/DLC_Batman_New52_GlovesAndBelts.xml
