@@ -117,6 +117,9 @@ class EditorCubeCapture : ScriptObject // script object in order to get events
     
     void Start()
     {
+        if (cubeMapGen_Size == 0)
+            cubeMapGen_Size = 128;
+
         // Construct render surface 
         renderImage_ = Texture2D();
         renderImage_.SetSize(cubeMapGen_Size, cubeMapGen_Size, GetRGBAFormat(), TEXTURE_RENDERTARGET);
