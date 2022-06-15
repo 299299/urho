@@ -162,6 +162,12 @@ void HandleUpdate(StringHash eventType, VariantMap& eventData)
             }
         }
     }
+
+    UIElement@ element = ui.GetElementAt(ui.cursor.position);
+    if (element !is null)
+    {
+        Print (element.name);
+    }
 }
 
 void HandleReloadFinishOrFail(StringHash eventType, VariantMap& eventData)

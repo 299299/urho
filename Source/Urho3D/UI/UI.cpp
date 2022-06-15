@@ -830,6 +830,7 @@ UIElement* UI::GetElementAt(UIElement* root, const IntVector2& position, bool en
 
     UIElement* result = nullptr;
     GetElementAt(result, root, positionCopy, enabledOnly);
+
     return result;
 }
 

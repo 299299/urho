@@ -1017,7 +1017,10 @@ void HandleBrowserFileDragEnd(StringHash eventType, VariantMap& eventData)
     if (@browserDragFile is null)
         return;
 
-    UIElement@ element = ui.GetElementAt(ui.cursor.screenPosition);
+    Print (ui.cursor.position.ToString());
+    Print (ui.cursor.screenPosition.ToString());
+
+    UIElement@ element = ui.GetElementAt(ui.cursor.position, false);
     if (element !is null)
         return;
 
