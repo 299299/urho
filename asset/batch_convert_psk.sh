@@ -7,4 +7,4 @@ blender_file='/Users/golden/Documents/userpref.blend'
 
 mkdir -p $output_folder
 
-$BLENDER --background --python ./blender_batch_convert.py -- $folder_name $output_folder
+$BLENDER --background --python ./batch_convert_psk.py -- $folder_name $output_folder

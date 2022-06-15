@@ -2,6 +2,7 @@ import bpy
 import sys
 import os
 import glob
+import time
 
 #BLENDER='/Applications/Blender.app/Contents/MacOS/Blender'
 
@@ -33,6 +34,8 @@ argv = sys.argv
 argv = argv[argv.index("--") + 1:]  # get all args after "---"
 print (argv)
 
+t1 = time.time()
+
 if len(argv) >= 2:
     input_folder=argv[0]
     output_folder=argv[1]
@@ -44,5 +47,26 @@ if len(argv) >= 2:
 
     for pskx_file in pskx_files:
         convert_psk(pskx_file, output_folder)
+
+    t2 = time.time()
+
+    print(r"""\
+
+                               ._ o o
+                               \_`-)|_
+                            ,""       \
+                          ,"  ## |   ಠ ಠ.
+                        ," ##   ,-\__    `.
+                      ,"       /     `--._;)
+                    ,"     ## /
+                  ,"   ##    /
+
+
+            """)
+
+    num_models = len(pskx_files)
+    print ("model converted = " + str(num_models) + " time cost=" + str(int(t2 - t1)) + " secs")
+
+
 
 
