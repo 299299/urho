@@ -147,6 +147,11 @@ public:
     /// Get a child element at element's screen position relative to specified root element.
     UIElement* GetElementAt(UIElement* root, const IntVector2& position, bool enabledOnly=true);
 
+    /// Return UI element at global screen coordinates. By default returns only input-enabled elements.
+    UIElement* GetElementAt_Scaled(const IntVector2& position, bool enabledOnly = true);
+    /// Return UI element at global screen coordinates. By default returns only input-enabled elements.
+    UIElement* GetElementAt_Scaled(int x, int y, bool enabledOnly = true);
+
     /// Return focused element.
     UIElement* GetFocusElement() const { return focusElement_; }
 

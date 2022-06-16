@@ -153,7 +153,7 @@ void CreateResourceBrowser()
     RebuildResourceDatabase();
 
     // added by golden, hide resource brower by default
-    HideResourceBrowserWindow();
+    // HideResourceBrowserWindow();
 }
 
 void RebuildResourceDatabase()
@@ -1017,10 +1017,7 @@ void HandleBrowserFileDragEnd(StringHash eventType, VariantMap& eventData)
     if (@browserDragFile is null)
         return;
 
-    Print (ui.cursor.position.ToString());
-    Print (ui.cursor.screenPosition.ToString());
-
-    UIElement@ element = ui.GetElementAt(ui.cursor.position, false);
+    UIElement@ element = ui.GetElementAt(ui.cursor.position);
     if (element !is null)
         return;
 
@@ -1034,7 +1031,8 @@ void HandleBrowserFileDragEnd(StringHash eventType, VariantMap& eventData)
     }
     else if (browserDragFile.resourceType == RESOURCE_TYPE_PREFAB)
     {
-        LoadNode(browserDragFile.GetFullPath(), null, true);
+        Node@ node = LoadNode(browserDragFile.GetFullPath(), null, true);
+        node.worldPosition = GetRayPickPosition();
     }
     else if (browserDragFile.resourceType == RESOURCE_TYPE_MODEL)
     {
@@ -1050,6 +1048,8 @@ void HandleBrowserFileDragEnd(StringHash eventType, VariantMap& eventData)
             StaticModel@ sm = createdNode.CreateComponent("StaticModel");
             sm.model = model;
         }
+        createdNode.worldPosition = GetRayPickPosition();
+
 
         AdjustNodePositionByAABB(createdNode);
     }
@@ -1730,4 +1730,32 @@ class ResourceType
     {
         return name.opCmp(b.name);
     }
+}
+
+void UpdateResourceBrowser()
+{
+    if (@browserDragFile is null)
+        return;
+
+
+}
+
+Vector3 GetRayPickPosition()
+{
+    Ray cameraRay = GetActiveViewportCameraRay();
+    Vector3 position, normal;
+    if (!GetSpawnPosition(cameraRay, 100, position, normal, 0, false))
+    {
+        // position = cameraRay.origin + cameraRay.direction * 50;
+        RayQueryResult result = editorScene.octree.RaycastSingle(cameraRay, RAY_TRIANGLE, maxDistance, DRAWABLE_GEOMETRY,
+            0x80000000);
+        if (result.drawable !is null)
+        {
+            position = result.position;
+            normal = result.normal;
+        }
+        else
+            position = cameraRay.origin + cameraRay.direction * 50;
+    }
+    return position;
 }

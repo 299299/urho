@@ -761,8 +761,8 @@ static void RegisterUI(asIScriptEngine* engine)
     engine->RegisterObjectMethod("UI", "void SetWidth(float)", asMETHOD(UI, SetWidth), asCALL_THISCALL);
     engine->RegisterObjectMethod("UI", "void SetHeight(float)", asMETHOD(UI, SetHeight), asCALL_THISCALL);
     engine->RegisterObjectMethod("UI", "void SetCustomSize(int, int)", asMETHODPR(UI, SetCustomSize, (int, int), void), asCALL_THISCALL);
-    engine->RegisterObjectMethod("UI", "UIElement@+ GetElementAt(const IntVector2&in, bool activeOnly = true)", asMETHODPR(UI, GetElementAt, (const IntVector2&, bool), UIElement*), asCALL_THISCALL);
-    engine->RegisterObjectMethod("UI", "UIElement@+ GetElementAt(int, int, bool activeOnly = true)", asMETHODPR(UI, GetElementAt, (int, int, bool), UIElement*), asCALL_THISCALL);
+    engine->RegisterObjectMethod("UI", "UIElement@+ GetElementAt(const IntVector2&in, bool activeOnly = true)", asMETHODPR(UI, GetElementAt_Scaled, (const IntVector2&, bool), UIElement*), asCALL_THISCALL);
+    engine->RegisterObjectMethod("UI", "UIElement@+ GetElementAt(int, int, bool activeOnly = true)", asMETHODPR(UI, GetElementAt_Scaled, (int, int, bool), UIElement*), asCALL_THISCALL);
     engine->RegisterObjectMethod("UI", "bool HasModalElement() const", asMETHOD(UI, HasModalElement), asCALL_THISCALL);
     engine->RegisterObjectMethod("UI", "void set_cursor(Cursor@+)", asMETHOD(UI, SetCursor), asCALL_THISCALL);
     engine->RegisterObjectMethod("UI", "Cursor@+ get_cursor() const", asMETHOD(UI, GetCursor), asCALL_THISCALL);

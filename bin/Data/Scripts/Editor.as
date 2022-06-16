@@ -143,6 +143,7 @@ void HandleUpdate(StringHash eventType, VariantMap& eventData)
     UpdateViewDebugIcons();
     UpdateOrigins();
     UpdatePaintSelection();
+    UpdateResourceBrowser();
     
     // Handle Particle Editor looping.
     if (particleEffectWindow !is null and particleEffectWindow.visible)
@@ -161,12 +162,6 @@ void HandleUpdate(StringHash eventType, VariantMap& eventData)
                 }
             }
         }
-    }
-
-    UIElement@ element = ui.GetElementAt(ui.cursor.position);
-    if (element !is null)
-    {
-        Print (element.name);
     }
 }
 

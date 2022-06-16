@@ -2452,11 +2452,11 @@ Vector3 GetNewNodePosition(bool raycastToMouse = false)
 {
     if (newNodeMode == NEW_NODE_IN_CENTER)
         return Vector3(0, 0, 0);
-    if (newNodeMode == NEW_NODE_RAYCAST)
+    if (newNodeMode == NEW_NODE_RAYCAST || raycastToMouse)
     {
         Ray cameraRay = raycastToMouse ? GetActiveViewportCameraRay() : camera.GetScreenRay(0.5, 0.5);
         Vector3 position, normal;
-        if (GetSpawnPosition(cameraRay, camera.farClip, position, normal, 0, false))
+        if (GetSpawnPosition(cameraRay, camera.farClip, position, normal, 0, true))
             return position;
     }
     return cameraLookAtNode.worldPosition;

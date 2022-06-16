@@ -839,6 +839,19 @@ UIElement* UI::GetElementAt(int x, int y, bool enabledOnly)
     return GetElementAt(IntVector2(x, y), enabledOnly);
 }
 
+
+UIElement* UI::GetElementAt_Scaled(const IntVector2& position, bool enabledOnly)
+{
+    IntVector2 scaled_pos = position / uiScale_;
+    return GetElementAt(scaled_pos, enabledOnly, nullptr);
+}
+
+UIElement* UI::GetElementAt_Scaled(int x, int y, bool enabledOnly)
+{
+    return GetElementAt(IntVector2(x / uiScale_, y / uiScale_), enabledOnly);
+}
+
+
 UIElement* UI::GetFrontElement() const
 {
     const Vector<SharedPtr<UIElement> >& rootChildren = rootElement_->GetChildren();
