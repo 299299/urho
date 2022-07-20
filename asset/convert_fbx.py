@@ -16,15 +16,26 @@ asset_output_folder = 'GameData/'
 # asset_output_path = 'Export_Objects/'
 mat_error_file = '/tmp/asset_mat_error'
 
+mat_special_cases = {
+    'ST_Ground_512x512':'MT_Ground_Tiles',
+    #'ST_Ground_SideWalkFlat01D' : 'MT_Ground_SideWalk'
+}
+
 def prepare_dir(dir):
     os.system("mkdir -p " + dir)
 
-def report_error():
+def report_error(error_msg):
+    print ('fbx convert error: ' + error_msg)
     os.system('touch ' + mat_error_file)
 
 def guess_mat_file(asset_path, mat_name, output_model_name):
+    if output_model_name in mat_special_cases:
+        mat_name = mat_special_cases[output_model_name]
+
     search_pat = asset_path + '**/' + mat_name + '*.mat'
     mat_files = glob.glob(search_pat, recursive=True)
+
+    searched_mat_name = ''
 
     # attempt #1
     if len(mat_files) == 0:
@@ -34,6 +45,7 @@ def guess_mat_file(asset_path, mat_name, output_model_name):
         print ("try search with " + mat_name)
         search_pat = asset_path + '**/' + mat_name + '*.mat'
         mat_files = glob.glob(search_pat, recursive=True)
+        searched_mat_name = mat_name
 
     # attempt #2
     if len(mat_files) == 0:
@@ -41,9 +53,12 @@ def guess_mat_file(asset_path, mat_name, output_model_name):
             mat_name = mat_name[:-1]
         if str(mat_name[-1]) == '_':
             mat_name = mat_name[:-1]
-        print ("try search with " + mat_name)
-        search_pat = asset_path + '**/' + mat_name + '*.mat'
-        mat_files = glob.glob(search_pat, recursive=True)
+
+        if mat_name != searched_mat_name:
+            print ("try search with " + mat_name)
+            search_pat = asset_path + '**/' + mat_name + '*.mat'
+            mat_files = glob.glob(search_pat, recursive=True)
+            searched_mat_name = mat_name
 
     # attempt #3
     if len(mat_files) == 0:
@@ -52,36 +67,29 @@ def guess_mat_file(asset_path, mat_name, output_model_name):
         if str(mat_name[-1]).isdigit():
             mat_name = mat_name[:-1]
 
-        print ("try search with " + mat_name)
-        search_pat = asset_path + '**/' + mat_name + '*.mat'
-        mat_files = glob.glob(search_pat, recursive=True)
-
+        if mat_name != searched_mat_name:
+            print ("try search with " + mat_name)
+            search_pat = asset_path + '**/' + mat_name + '*.mat'
+            mat_files = glob.glob(search_pat, recursive=True)
+            searched_mat_name = mat_name
 
     if len(mat_files) == 0:
-        print (mat_name + ' not found !!')
-        report_error()
-        return ""
+        report_error(mat_name + ' not found !!')
+    return mat_files
 
-    return mat_files[0]
+def process_material_file(mat_file, output_folder,
+                         output_model_name, mat_template, asset_output_path,
+                         b_character, b_overwrite, asset_path):
+    mat_name = os.path.splitext(mat_file)[0]
+    mat_name = os.path.basename(mat_name)
 
-def process_material(mat_name, output_folder,
-                     output_model_name, mat_template, asset_output_path,
-                     b_character, b_overwrite, asset_path):
-    print ("processing material " + mat_name)
-
-    mat_file = guess_mat_file(asset_path, mat_name, output_model_name)
-
-    if (mat_file == ""):
-        return;
+    print ("find relevant material: " + mat_file + " name: " + mat_name)
 
     diff = None
     specular = None
     normal = None
     emissive = None
-
     tech = "Diff"
-
-    mat_path = os.path.dirname(mat_file)
 
     with open(mat_file, "r") as text_file:
         tex_list = text_file.read().splitlines()
@@ -116,11 +124,10 @@ def process_material(mat_name, output_folder,
     #         if tex_words[1].endswith('_N'):
     #             normal = tex_words[1]
 
-    #print (mat_path)
-    diff = find_texture(mat_path, diff)
-    normal = find_texture(mat_path, normal)
-    specular = find_texture(mat_path, specular)
-    emissive = find_texture(mat_path, emissive)
+    diff = find_texture(asset_path, diff)
+    normal = find_texture(asset_path, normal)
+    specular = find_texture(asset_path, specular)
+    emissive = find_texture(asset_path, emissive)
 
     output_texture_folder = output_folder + "Textures/"
     texture_base_path = asset_output_path + output_model_name + "/Textures/"
@@ -136,7 +143,7 @@ def process_material(mat_name, output_folder,
         diff_tex_found = False
 
     if not diff_tex_found:
-        report_error()
+        report_error("diffuse texture not found!")
 
     if normal:
         os.system('cp -f ' + normal + ' ' + output_texture_folder)
@@ -178,7 +185,6 @@ def process_material(mat_name, output_folder,
 
     #print (mat_text)
     mat_lines = mat_text.splitlines()
-
     output_mat_file = output_folder + 'Materials/' + mat_name + '.xml';
     #print (output_mat_file)
 
@@ -194,11 +200,29 @@ def process_material(mat_name, output_folder,
 
     return mat_name
 
+
+def process_material(mat_name, output_folder,
+                     output_model_name, mat_template, asset_output_path,
+                     b_character, b_overwrite, asset_path):
+    print ("processing material " + mat_name)
+
+    mat_file_list = guess_mat_file(asset_path, mat_name, output_model_name)
+
+    if (len(mat_file_list) == 0):
+        return "not_found"
+
+    for mat_file in mat_file_list:
+        mat_name = process_material_file(mat_file, output_folder,
+                                         output_model_name, mat_template, asset_output_path,
+                                         b_character, b_overwrite, asset_path)
+
+    return mat_name
+
 def find_texture(mat_path, text_name):
     if not text_name:
         return None
 
-    search_pat = mat_path + '/../../' + '**/' + text_name + '.tga'
+    search_pat = mat_path + '/**/' + text_name + '.tga'
     #print (search_pat)
     diff_list = glob.glob(search_pat, recursive=True)
     if len(diff_list) > 0:
@@ -269,6 +293,7 @@ if __name__ == "__main__":
     asset_output_path = argv[1]
     b_overwrite = False
     b_character = False
+    ignore_mat_error = False
 
     for idx, arg in enumerate(argv):
         if arg == '-f':
@@ -277,6 +302,8 @@ if __name__ == "__main__":
             b_character = True
         if arg == '-a':
             raw_asset_path = argv[idx+1]
+        if arg == '-i':
+            ignore_mat_error = True
 
     print (raw_asset_path)
 
@@ -319,7 +346,6 @@ if __name__ == "__main__":
         mat_list = f.read().splitlines()
 
     #os.system('rm ' + output_txt)
-    mat_error_happened = False
 
     for idx, mat_file in enumerate(mat_list):
         mat_name = os.path.splitext(mat_file)[0]
@@ -332,13 +358,10 @@ if __name__ == "__main__":
 
         mat_list[idx] = 'Materials/' + new_mat_name + '.xml'
 
-        if os.path.exists(mat_error_file):
-            mat_error_happened = True
-            break
-
     process_object(output_model_name, output_folder, output_model_name,
                    obj_template, mat_list, b_overwrite, asset_output_path)
 
-    if mat_error_happened:
+    if os.path.exists(mat_error_file) and not ignore_mat_error:
+        print ('trying to clean up folder ' + output_folder)
         os.system('rm -rf ' + output_folder)
 

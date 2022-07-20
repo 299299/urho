@@ -8,6 +8,7 @@ import time
 
 model_convert_script='./convert_fbx.py'
 mat_error_file = '/tmp/asset_mat_error'
+fbx_export_error_file = '/tmp/fbx_export_mat_error_file.txt'
 
 if __name__ == "__main__":
 
@@ -48,8 +49,13 @@ if __name__ == "__main__":
 
     t2 = time.time()
     print ("fbx converted = " + str(num_of_fbx) + " time cost=" + str(int(t2 - t1)) + " secs")
+    print ("material error file num=" + str(len(mat_error_fbx_files)))
 
-    print ("material error fbx num-files:" + str(len(mat_error_fbx_files)))
-    print (mat_error_fbx_files)
+    mat_err_file = open(fbx_export_error_file, "w")
+    for fbx_file in mat_error_fbx_files:
+        mat_err_file.write(fbx_file + "\n")
+    mat_err_file.close()
+
+    os.system('cat ' + fbx_export_error_file)
 
 
